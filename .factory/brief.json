@@ -1,0 +1,13 @@
+{
+  "slug": "timezone-slot-proof",
+  "title": "Timezone Slot Proof",
+  "territory": "utilities",
+  "user": "Solo professionals publishing booking links who need proof that their stated working hours produce the intended slots across invitee time zones and DST boundaries.",
+  "current_workaround": "Create test bookings, manually reason about time zones, or discover wrong slots after a client books them.",
+  "smallest_useful_product": "A static web tool that imports an ICS availability window or accepts weekly hours, renders the next 18 months of slots for selected zones, highlights DST discontinuities, and exports a shareable test matrix.",
+  "success_measure": "For a seeded DST test suite, the tool flags 100% of intentionally shifted/missing slots and users can complete a five-zone review in under three minutes.",
+  "artifact_class": "static-web",
+  "monetization": "free",
+  "constraints": "Use current IANA timezone data; label results as a configuration check rather than a guarantee of third-party scheduler behavior; avoid calendar credentials.",
+  "state": "BUILT"
+}
