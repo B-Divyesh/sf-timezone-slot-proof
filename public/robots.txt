@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://timezone-slot-proof.sociobot.in/sitemap.xml

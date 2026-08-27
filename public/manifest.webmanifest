@@ -1,0 +1,10 @@
+{
+  "name": "Timezone Slot Proof",
+  "short_name": "Slot Proof",
+  "description": "Inspect booking hours across time zones and daylight-saving changes.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f2f0e8",
+  "theme_color": "#405d36",
+  "icons": [{ "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }]
+}

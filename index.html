@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#405d36" />
+    <meta name="description" content="Prove how your booking hours appear across time zones and daylight-saving changes before you publish them." />
+    <link rel="canonical" href="https://timezone-slot-proof.sociobot.in/" />
+    <meta property="og:title" content="Timezone Slot Proof" />
+    <meta property="og:description" content="Inspect 18 months of booking slots across time zones and DST boundaries." />
+    <meta property="og:image" content="https://timezone-slot-proof.sociobot.in/assets/time-slab-1280.webp" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <title>Timezone Slot Proof — Inspect booking hours across DST</title>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to validator</a>
+    <header class="site-header">
+      <a class="wordmark" href="/" aria-label="Timezone Slot Proof home">
+        <span class="wordmark-mark" aria-hidden="true">T<span>Z</span></span>
+        <span>Timezone<br />Slot Proof</span>
+      </a>
+      <nav aria-label="Primary">
+        <a href="#validator">Run a proof</a>
+        <a href="#method">Method</a>
+      </nav>
+      <span class="local-badge">Local only</span>
+    </header>
+
+    <main id="main">
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="hero-copy">
+          <p class="eyebrow"><span>01</span> Before clients find the broken hour</p>
+          <h1 id="hero-title">Prove your slots survive the clock change.</h1>
+          <p class="lede">Turn working hours or an ICS availability file into an 18-month, five-zone inspection. See shifted, skipped, and repeated times before you publish a booking link.</p>
+          <a class="button primary hero-action" href="#validator">Inspect my hours <span aria-hidden="true">↓</span></a>
+          <ul class="trust-line" aria-label="Product promises">
+            <li>No calendar login</li>
+            <li>Runs in your browser</li>
+            <li>Exports the evidence</li>
+          </ul>
+        </div>
+        <figure class="hero-figure">
+          <picture>
+            <source media="(max-width: 720px)" srcset="/assets/time-slab-720.webp" />
+            <img src="/assets/time-slab-1280.webp" srcset="/assets/time-slab-720.webp 720w, /assets/time-slab-1280.webp 1280w" sizes="(max-width: 760px) 100vw, 48vw" width="1280" height="853" fetchpriority="high" decoding="async" alt="Five parallel tracks cut into a concrete slab, with moss around aligned markers and one amber offset seam." />
+          </picture>
+          <figcaption><span aria-hidden="true">↳</span> Five zones. One seasonal seam. Make it visible.</figcaption>
+        </figure>
+      </section>
+
+      <section class="validator" id="validator" aria-labelledby="validator-title">
+        <div class="section-heading">
+          <p class="eyebrow"><span>02</span> Build the test</p>
+          <h2 id="validator-title">Describe what should be bookable</h2>
+          <p>Your data stays on this device. We calculate with the IANA timezone data built into your browser.</p>
+        </div>
+
+        <div id="connection-status" class="connection-status" role="status" hidden>
+          <strong>Offline, still working.</strong> The validator runs locally. Keep this tab open to export your result.
+        </div>
+
+        <form id="proof-form" novalidate>
+          <div class="source-panel">
+            <fieldset class="source-switch">
+              <legend>Availability source</legend>
+              <label><input type="radio" name="source" value="weekly" checked /><span>Weekly hours</span></label>
+              <label><input type="radio" name="source" value="ics" /><span>Import ICS</span></label>
+            </fieldset>
+
+            <div id="weekly-source">
+              <div class="field-row two-up">
+                <label class="field">
+                  <span>Your working timezone</span>
+                  <input id="host-zone" name="host-zone" list="timezone-list" autocomplete="off" spellcheck="false" required />
+                  <small>The zone used by your booking-page configuration.</small>
+                </label>
+                <label class="field">
+                  <span>Test from</span>
+                  <input id="start-date" name="start-date" type="date" required />
+                  <small>The proof always covers the next 18 months.</small>
+                </label>
+              </div>
+
+              <fieldset class="hours-fieldset">
+                <div class="fieldset-heading">
+                  <legend>Weekly working windows</legend>
+                  <button class="button text-button" id="add-window" type="button">+ Add window</button>
+                </div>
+                <div id="windows"></div>
+              </fieldset>
+            </div>
+
+            <div id="ics-source" hidden>
+              <label class="drop-zone" for="ics-file" id="drop-zone">
+                <span class="drop-icon" aria-hidden="true">⇩</span>
+                <strong>Choose an .ics availability file</strong>
+                <span>VEVENT or AVAILABLE windows; weekly RRULE supported. No upload occurs.</span>
+                <input id="ics-file" type="file" accept=".ics,text/calendar" />
+              </label>
+              <div id="ics-summary" class="ics-summary" role="status">No file selected.</div>
+            </div>
+          </div>
+
+          <aside class="scenario-panel" aria-labelledby="scenario-title">
+            <div class="panel-number" aria-hidden="true">A—B</div>
+            <h3 id="scenario-title">Test conditions</h3>
+            <div class="field-row two-up compact">
+              <label class="field">
+                <span>Meeting length</span>
+                <select id="duration" name="duration">
+                  <option value="15">15 min</option>
+                  <option value="30" selected>30 min</option>
+                  <option value="45">45 min</option>
+                  <option value="60">60 min</option>
+                  <option value="90">90 min</option>
+                </select>
+              </label>
+              <label class="field">
+                <span>Start interval</span>
+                <select id="interval" name="interval">
+                  <option value="15">15 min</option>
+                  <option value="30" selected>30 min</option>
+                  <option value="60">60 min</option>
+                </select>
+              </label>
+            </div>
+
+            <fieldset class="zones-fieldset">
+              <legend>Invitee zones <span id="zone-count">3 / 5</span></legend>
+              <p class="field-help">Use IANA names. Add up to five places your clients book from.</p>
+              <div id="zones"></div>
+              <button class="button text-button" id="add-zone" type="button">+ Add invitee zone</button>
+            </fieldset>
+
+            <div id="form-errors" class="form-errors" role="alert" aria-live="assertive" hidden></div>
+            <button class="button primary run-button" type="submit">Run 18-month proof <span aria-hidden="true">→</span></button>
+            <p class="run-note"><span aria-hidden="true">◉</span> Configuration check, not a guarantee of any scheduler’s behavior.</p>
+          </aside>
+        </form>
+      </section>
+
+      <section id="results-shell" class="results-shell" aria-labelledby="results-title">
+        <div id="empty-results" class="empty-results">
+          <div class="registration-mark" aria-hidden="true"><i></i><i></i><i></i></div>
+          <div>
+            <p class="eyebrow"><span>03</span> Proof board</p>
+            <h2 id="results-title">Your test matrix will land here</h2>
+            <p>Run the proof to trace every generated start time, isolate DST seams, and export a portable review.</p>
+          </div>
+        </div>
+        <div id="results" hidden aria-live="polite"></div>
+      </section>
+
+      <section class="method" id="method" aria-labelledby="method-title">
+        <div>
+          <p class="eyebrow"><span>04</span> What the proof means</p>
+          <h2 id="method-title">A small test rig for civil time</h2>
+        </div>
+        <ol class="method-steps">
+          <li><span>1</span><div><h3>Generate</h3><p>Every valid meeting start is generated from your declared wall-clock window for the next 18 months.</p></div></li>
+          <li><span>2</span><div><h3>Project</h3><p>Each instant is projected into every selected IANA zone using the timezone rules in this browser.</p></div></li>
+          <li><span>3</span><div><h3>Compare</h3><p>Week-equivalent starts are compared. Shifts, skipped times, repeated times, and offset-only changes are marked.</p></div></li>
+          <li><span>4</span><div><h3>Carry</h3><p>Download the complete CSV or share a link that recreates the weekly-hours configuration without an account.</p></div></li>
+        </ol>
+        <aside class="caveat">
+          <strong>Keep the claim honest.</strong>
+          <p>This checks your intended configuration against browser timezone data. It cannot observe a third-party scheduler’s internal rules, overrides, busy calendars, or stale timezone database.</p>
+        </aside>
+      </section>
+    </main>
+
+    <footer>
+      <div class="footer-mark" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
+      <p><strong>Timezone Slot Proof</strong><br />A free, local-first utility from the Param Factory.</p>
+      <nav aria-label="Legal">
+        <a href="/privacy/">Privacy</a>
+        <a href="/terms/">Terms</a>
+        <a href="#main">Back to top ↑</a>
+      </nav>
+      <p class="generated-note">Hero imagery generated for this product with factory-image.</p>
+    </footer>
+
+    <datalist id="timezone-list"></datalist>
+    <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
