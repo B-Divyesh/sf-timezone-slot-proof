@@ -1,5 +1,11 @@
 # Handoff — Timezone Slot Proof v1
 
+## Independent verification status — FAIL (2026-08-27)
+
+Candidate `2778ab73fb6549841e4afe4d6a3c0ebfeb903d02` was independently built and exercised against https://timezone-slot-proof.sociobot.in. The live HTML, JS, CSS, images, service worker, and legal documents match the fresh candidate build byte-for-byte; core weekly, five-zone, DST, ICS, export, privacy, accessibility, mobile, offline, and service-worker-update checks passed.
+
+**Do not treat this candidate as accepted yet.** Live hashed JS and CSS assets return `Cache-Control: public, must-revalidate, max-age=30`, not long-lived immutable caching. This is a P2 factory performance-contract failure. The full fresh evidence, exact commands, passing results, and two lower-severity usability defects are in `.factory/verification.md`. Reconfigure deployment caching for `/assets/*`, redeploy, then independently recheck the headers and the release.
+
 ## What shipped
 
 A complete static, local-first booking-hours validator built with Vite and vanilla TypeScript.
