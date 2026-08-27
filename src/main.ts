@@ -4,11 +4,13 @@ import { decodeConfig, downloadText, encodeConfig, resultToCsv } from './core/ex
 import { parseIcs } from './core/ics';
 import { generateIcs, generateWeekly, safeFilenameTimestamp } from './core/schedule';
 import { isValidZone } from './core/timezone';
+import { nextAvailableZone } from './core/zones';
 
 type Filter = 'all' | 'changes' | 'problems';
 
 const fallbackZones = ['UTC', 'America/New_York', 'America/Chicago', 'America/Denver', 'America/Los_Angeles', 'America/Toronto', 'America/Sao_Paulo', 'Europe/London', 'Europe/Paris', 'Europe/Berlin', 'Africa/Johannesburg', 'Asia/Dubai', 'Asia/Kolkata', 'Asia/Singapore', 'Asia/Tokyo', 'Australia/Sydney', 'Pacific/Auckland'];
 const allZones: string[] = typeof Intl.supportedValuesOf === 'function' ? Intl.supportedValuesOf('timeZone') : fallbackZones;
+const suggestedInviteeZones = ['Australia/Sydney', 'Asia/Tokyo', 'Europe/Paris', 'America/Los_Angeles', 'Africa/Johannesburg', 'Pacific/Auckland', 'America/Sao_Paulo'];
 const dayLabels = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
 let windows: WeeklyWindow[] = [{ id: crypto.randomUUID(), days: [1, 2, 3, 4, 5], start: '09:00', end: '17:00' }];
@@ -334,7 +336,10 @@ zoneList.addEventListener('click', (event) => {
 });
 
 $('#add-zone').addEventListener('click', () => {
-  syncZoneState(); if (inviteeZones.length < 5) inviteeZones.push('Australia/Sydney'); renderZones();
+  syncZoneState();
+  const nextZone = nextAvailableZone(inviteeZones, [...suggestedInviteeZones, ...allZones]);
+  if (inviteeZones.length < 5 && nextZone) inviteeZones.push(nextZone);
+  renderZones();
   zoneList.querySelector<HTMLInputElement>('.zone-row:last-child input')?.select();
 });
 

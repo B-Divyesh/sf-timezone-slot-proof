@@ -7,10 +7,12 @@
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview",
-    "test": "vitest run",
+    "test": "npm run build && vitest run",
+    "test:unit": "vitest run",
     "test:watch": "vitest"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.13.0",
     "typescript": "^5.9.2",
     "vite": "^7.1.3",
     "vitest": "^3.2.4"

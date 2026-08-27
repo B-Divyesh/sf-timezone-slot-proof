@@ -32,7 +32,9 @@ npm run preview
 
 `npm run build` is the factory build command. It writes the deployable static site to `./dist`, with `dist/index.html` at its root.
 
-The unit suite includes seeded 2026 US/UK DST transitions and ICS recurrence cases. For a browser smoke test, serve the build and run the factory verifier if available:
+`npm test` rebuilds `dist/` before running the suite. In addition to seeded 2026 US/UK DST transitions and ICS recurrence cases, it checks the emitted Static Web Apps configuration: content-hashed JS/CSS receive one-year immutable caching while documents and `sw.js` revalidate.
+
+For a browser smoke test, serve the build and run the factory verifier if available:
 
 ```sh
 /opt/fleet/lib/verify-url.sh http://127.0.0.1:4173 .factory/evidence
