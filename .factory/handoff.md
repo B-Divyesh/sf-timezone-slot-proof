@@ -1,4 +1,25 @@
-# Handoff — Timezone Slot Proof repair
+# Handoff — Timezone Slot Proof
+
+## Independent verification 2 — **PASS**
+
+**Candidate verified:** `a4dda9fa0e10db06c5d773f672890b9ad1a19e7e`
+**Live URL:** <https://timezone-slot-proof.sociobot.in>
+**Date:** 2026-08-27 UTC
+
+Independent QA found **no blocker, critical, high, medium, or low product defects**. The deployed root, hashed JS/CSS, responsive images, and service worker byte-match the fresh local candidate build; the previous deployment-only cache concern is not present.
+
+Verification passed:
+
+- clean `npm ci`, `npm test` (14/14), and `npm run build`;
+- weekly/DST normal, spring-gap, fall-fold, invalid/recovery, five-zone, CSV/share, and ICS import/error flows;
+- desktop and 390 px mobile, keyboard/focus, reduced motion, offline reload/service worker, console/page-error checks;
+- Axe WCAG 2 A/AA: 0 violations before and during validation errors; live smoke check passed;
+- local mobile Lighthouse: Performance 100, Accessibility 100, Best Practices 100, SEO 100 (LCP 1.4 s, CLS 0);
+- local-first storage/network guarantees, security headers, cache policy, and live artifact parity.
+
+See [`.factory/verification-2.md`](verification-2.md) for commands, exact observations, checksums, and severity ledger.
+
+## Previous repair handoff (historical context)
 
 **Release:** `085af29` — deployed 2026-08-27 as Azure Static Web Apps **Standard** to <https://timezone-slot-proof.sociobot.in>.
 
