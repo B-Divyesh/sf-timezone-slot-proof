@@ -67,3 +67,4 @@
 - Browser test includes Axe WCAG 2 A/AA scan with zero violations, 390 px width check, routing/title/focus checks, and offline demo reload.
 - Screenshots: `.factory/evidence/demo-mobile.png`, `.factory/evidence/not-found.png`.
 - Local mobile Lighthouse on `/demo`: Performance 92, Accessibility 100, Best Practices 100, SEO 100.
+- Live recheck: `https://timezone-slot-proof.sociobot.in/demo`, `/privacy/`, and `/no-such-proof` loaded cold with the demo/result, correct title/focus/404, 390 px width, and zero console errors. Live `verify-url.sh` passed.
