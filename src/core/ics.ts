@@ -9,7 +9,7 @@ function unfold(text: string): string[] {
 function parseCalendarDate(value: string): WallTime {
   const clean = value.replace(/Z$/, '');
   const match = clean.match(/^(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})?$/);
-  if (!match) throw new Error('All-day or malformed dates are not availability windows. Use timed DTSTART and DTEND values.');
+  if (!match) throw new Error('All-day or malformed dates are not availability entries. Use timed DTSTART and DTEND values.');
   return {
     year: Number(match[1]), month: Number(match[2]), day: Number(match[3]),
     hour: Number(match[4]), minute: Number(match[5]), second: Number(match[6] ?? 0),
@@ -40,17 +40,17 @@ export function parseIcs(text: string): IcsEvent[] {
     else if (/^END:(VEVENT|AVAILABLE)$/i.test(line) && current) { groups.push(current); current = null; }
     else if (current) current.push(line);
   }
-  if (!groups.length) throw new Error('No VEVENT or AVAILABLE windows were found in this file.');
+  if (!groups.length) throw new Error('No calendar availability entries were found in this file.');
 
   return groups.map((group, index) => {
     const dtStart = readProperty(group, 'DTSTART');
     const dtEnd = readProperty(group, 'DTEND');
-    if (!dtStart || !dtEnd) throw new Error(`Availability window ${index + 1} needs both DTSTART and DTEND.`);
+    if (!dtStart || !dtEnd) throw new Error(`Availability entry ${index + 1} needs both DTSTART and DTEND.`);
     const start = parseCalendarDate(dtStart.value);
     const end = parseCalendarDate(dtEnd.value);
     const wallDuration = Date.UTC(end.year, end.month - 1, end.day, end.hour, end.minute) - Date.UTC(start.year, start.month - 1, start.day, start.hour, start.minute);
-    if (wallDuration <= 0) throw new Error(`Availability window ${index + 1} must end after it starts.`);
-    if (dtStart.zone && dtEnd.zone && dtStart.zone !== dtEnd.zone) throw new Error(`Availability window ${index + 1} must use the same timezone for DTSTART and DTEND.`);
+    if (wallDuration <= 0) throw new Error(`Availability entry ${index + 1} must end after it begins.`);
+    if (dtStart.zone && dtEnd.zone && dtStart.zone !== dtEnd.zone) throw new Error(`Availability entry ${index + 1} must use the same time-zone name for DTSTART and DTEND.`);
     const isUtc = dtStart.value.endsWith('Z');
     const zone = isUtc ? 'UTC' : (dtStart.zone ?? dtEnd.zone ?? 'UTC');
     const ruleText = readProperty(group, 'RRULE')?.value;
@@ -60,7 +60,7 @@ export function parseIcs(text: string): IcsEvent[] {
         const [key, value = ''] = part.split('=');
         return [key?.toUpperCase(), value];
       }));
-      if (values.FREQ !== 'WEEKLY') throw new Error('Only weekly recurring availability is supported. Export one-off windows for other recurrence patterns.');
+      if (values.FREQ !== 'WEEKLY') throw new Error('Only weekly recurring availability is supported. Export one-off entries for other recurrence patterns.');
       const recurrenceInterval = Number(values.INTERVAL || 1);
       if (!Number.isInteger(recurrenceInterval) || recurrenceInterval < 1) throw new Error('The weekly recurrence interval must be a positive whole number.');
       rrule = {

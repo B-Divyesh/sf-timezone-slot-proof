@@ -11,7 +11,8 @@ Try the five-zone sample at <https://timezone-slot-proof.sociobot.in/?demo=1>. T
 - Add weekly booking hours or a calendar file.
 - Check up to five client time zones for 18 months.
 - Mark shifted, skipped, and repeated bookable times.
-- Export the full check as CSV or print it.
+- Export every generated bookable time as CSV or print it.
+- Copy a read-only weekly booking-hours check that opens with its result.
 
 This tool checks the hours you enter. It does not read your scheduler, calendar, overrides, or busy times.
 

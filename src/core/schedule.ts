@@ -99,7 +99,7 @@ export function generateWeekly(config: ProofConfig): ProofResult {
       if (!window.days.includes(dayOfWeek(cursor))) continue;
       const from = timeMinutes(window.start);
       const to = timeMinutes(window.end);
-      if (to <= from) throw new Error('Each working-hours end must be later than its start. Split overnight hours into two windows.');
+      if (to <= from) throw new Error('Each booking-hours range must end later than it begins. Split overnight hours into two ranges.');
       for (let minute = from; minute + config.duration <= to; minute += config.interval) {
         if (rows.length >= MAX_SLOTS) { truncated = true; break; }
         const hostWall = addWallMinutes({ ...cursor, hour: 0, minute: 0 }, minute);

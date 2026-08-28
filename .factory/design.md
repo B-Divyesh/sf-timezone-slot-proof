@@ -39,8 +39,8 @@ An 8px base rhythm: 4, 8, 12, 16, 24, 32, 48, 72. Major regions use thick 2px in
 - Primary action is a moss block with a physical 3px ink offset; pressed state closes the offset.
 - Inputs look inset into concrete with an explicit label above and plain-language help below.
 - Review results arrive as a stamped proof strip, then the anomaly ledger, then the full test matrix.
-- A segmented `All / DST changes / Problems` control filters the matrix without changing the calculation.
-- The link contains configuration only, never imported ICS contents; the interface states this before copying.
+- A segmented `Show all bookable times / Show clock changes / Show problems` control filters the table without changing the calculation.
+- A weekly review link contains configuration only, never imported calendar contents, and opens a read-only generated check.
 - Focus is a 3px blueprint outline plus offset, visible on every control.
 
 ## Motion policy

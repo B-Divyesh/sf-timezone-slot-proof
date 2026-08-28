@@ -18,6 +18,8 @@
     <link rel="manifest" href="/manifest.webmanifest" />
     <script src="/route-mode.js"></script>
     <title>Timezone Slot Proof — Check booking hours</title>
+    <script type="module" crossorigin src="/assets/index-DA31QIcc.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-Dds2FKX5.css">
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to main content</a>
@@ -38,7 +40,7 @@
     <div id="route-announcement" class="sr-only" aria-live="polite" aria-atomic="true"></div>
     <main id="main">
       <section id="demo-banner" class="demo-banner" role="status" hidden>
-        <div id="demo-route-heading"><p class="route-banner-title">Sample booking-hours check</p></div>
+        <div id="demo-route-heading" hidden></div>
         <p><strong>Demo — sample data, nothing is saved.</strong> This five-zone check is separate from your own booking hours.</p>
         <div><button id="reset-demo" class="button text-button" type="button">Reset demo</button><button id="start-real" class="button secondary" type="button">Start for real</button></div>
       </section>
@@ -206,6 +208,5 @@
 
     <datalist id="timezone-list"></datalist>
     <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
-    <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

@@ -16,20 +16,20 @@ test('@claim:offline-demo demo reloads and remains usable offline after the firs
   await page.goto('/demo');
   await page.waitForFunction(() => navigator.serviceWorker?.controller !== null);
   await page.reload();
-  await expect(page.getByText('Starts tested', { exact: true })).toBeVisible();
+  await expect(page.getByText('Bookable times tested', { exact: true })).toBeVisible();
   await page.waitForFunction(() => navigator.serviceWorker?.controller !== null);
   const cached = await page.evaluate(async () => Promise.all((await caches.keys()).map(async (name) => { const cache = await caches.open(name); return { name, keys: (await cache.keys()).map((key) => key.url) }; })));
   expect(cached.flatMap((cache) => cache.keys).some((url) => /\/assets\/index-.*\.js$/.test(url))).toBeTruthy();
   await context.setOffline(true);
   await page.reload();
-  await expect(page.getByText('Starts tested', { exact: true })).toBeVisible();
+  await expect(page.getByText('Bookable times tested', { exact: true })).toBeVisible();
 });
 
 test('@claim:demo-isolation demo starts with a five-zone sample and never reads or writes real configuration', async ({ page }) => {
   await page.addInitScript(() => localStorage.setItem('timezone-slot-proof:config', JSON.stringify({ hostZone: 'UTC', zones: ['UTC'] })));
   await page.goto('/demo');
   await expect(page.getByText('Demo — sample data, nothing is saved.')).toBeVisible();
-  await expect(page.getByText('Starts tested', { exact: true })).toBeVisible();
+  await expect(page.getByText('Bookable times tested', { exact: true })).toBeVisible();
   await expect(page.locator('#zone-count')).toHaveText('5 / 5');
   expect(await page.evaluate(() => localStorage.getItem('timezone-slot-proof:config'))).toContain('UTC');
   expect(await page.evaluate(() => Object.keys(localStorage).filter((key) => key.startsWith('demo:')))).toEqual([]);
@@ -39,34 +39,68 @@ test('@claim:demo-isolation demo starts with a five-zone sample and never reads 
 
 test('@claim:dst-check sample check covers 18 months, five zones, and daylight-saving flags', async ({ page }) => {
   await page.goto('/demo');
-  await expect(page.getByText(/starts tested across 5 client time zones over 18 months/i)).toBeVisible();
-  await expect(page.getByText('Shifted', { exact: true }).first()).toBeVisible();
-  await expect(page.getByText('Skipped', { exact: true }).first()).toBeVisible();
-  await expect(page.getByText('Repeated', { exact: true }).first()).toBeVisible();
+  await expect(page.getByText(/bookable times tested across 5 client time zones over 18 months/i)).toBeVisible();
+  const metric = (label: string) => page.locator('.metrics div', { has: page.getByText(label, { exact: true }) }).locator('dd');
+  await expect(metric('Bookable times tested')).toHaveText('158');
+  await expect(metric('Shifted')).toHaveText('18');
+  await expect(metric('Skipped')).toHaveText('2');
+  await expect(metric('Repeated')).toHaveText('2');
+  await expect(page.locator('.anomaly-ledger li', { hasText: 'Shifted' }).first()).toBeVisible();
+  await expect(page.locator('.anomaly-ledger li', { hasText: 'Skipped' }).first()).toBeVisible();
+  await expect(page.locator('.anomaly-ledger li', { hasText: 'Repeated' }).first()).toBeVisible();
 });
 
 test('@claim:csv-export sample check exports every result as CSV', async ({ page }) => {
   await page.goto('/demo');
+  const count = Number(await page.locator('.proof-header').getAttribute('data-bookable-time-count'));
   const download = page.waitForEvent('download');
   await page.getByRole('button', { name: 'Export CSV' }).click();
   const file = await download;
   expect(file.suggestedFilename()).toMatch(/^timezone-slot-proof-.+\.csv$/);
   const csv = await readFile(await file.path()!, 'utf8');
   expect(csv.split('\n')[0]).toContain('host_date');
-  expect(csv.trim().split('\n').length).toBeGreaterThan(120);
+  expect(csv.trim().split('\n').length - 1).toBe(count);
+});
+
+test('@claim:review-link weekly checks copy a populated, read-only result without calendar-file contents', async ({ page, context }) => {
+  await context.grantPermissions(['clipboard-read', 'clipboard-write']);
+  await page.goto('/demo');
+  const source = page.locator('.proof-header');
+  const sourceRange = await source.getAttribute('data-range-start');
+  const sourceEnd = await source.getAttribute('data-range-end');
+  const sourceZones = await source.getAttribute('data-zone-count');
+  const sourceCount = await source.getAttribute('data-bookable-time-count');
+  await page.getByRole('button', { name: 'Copy review link' }).click();
+  await expect(page.getByText('Review link copied. It opens this completed check.')).toBeVisible();
+  const reviewUrl = await page.evaluate(() => navigator.clipboard.readText());
+  expect(reviewUrl).toMatch(/#review=/);
+  expect(reviewUrl).not.toContain('BEGIN:VCALENDAR');
+  const recipient = await context.newPage();
+  await recipient.goto(reviewUrl);
+  await expect(recipient.getByRole('heading', { name: 'Shared booking-hours check' })).toBeFocused();
+  await expect(recipient.locator('h1')).toHaveCount(1);
+  await expect(recipient.getByText('Read-only weekly booking-hours check', { exact: false })).toBeVisible();
+  const shared = recipient.locator('.proof-header');
+  await expect(shared).toHaveAttribute('data-range-start', sourceRange!);
+  await expect(shared).toHaveAttribute('data-range-end', sourceEnd!);
+  await expect(shared).toHaveAttribute('data-zone-count', sourceZones!);
+  await expect(shared).toHaveAttribute('data-bookable-time-count', sourceCount!);
+  await expect(recipient.locator('#proof-form')).toBeHidden();
+  await mkdir('.factory/evidence-polish-4', { recursive: true });
+  await recipient.screenshot({ path: '.factory/evidence-polish-4/review-link.png', fullPage: false });
 });
 
 test('@claim:local-only demo calculation makes no third-party requests', async ({ page }) => {
   const origins = new Set<string>();
   page.on('request', (request) => origins.add(new URL(request.url()).origin));
   await page.goto('/demo');
-  await expect(page.getByText('Starts tested', { exact: true })).toBeVisible();
+  await expect(page.getByText('Bookable times tested', { exact: true })).toBeVisible();
   expect([...origins]).toEqual(['http://127.0.0.1:4173']);
 });
 
 test('@claim:no-login demo has no account or calendar-login flow', async ({ page }) => {
   await page.goto('/demo');
-  await expect(page.getByText('No calendar login')).toBeVisible();
+  await expect(page.getByText('Sample needs no calendar login')).toBeVisible();
   expect(await page.locator('input[type="password"], [data-auth], a[href*="oauth" i], a[href*="login" i]').count()).toBe(0);
 });
 
@@ -80,7 +114,7 @@ test('@claim:normal-config-local weekly booking hours stay in browser storage wi
   await page.locator('#host-zone').fill('America/New_York');
   await page.locator('#start-date').fill('2026-08-01');
   await page.getByRole('button', { name: /Check booking hours/i }).last().click();
-  await expect(page.getByText('Starts tested', { exact: true })).toBeVisible();
+  await expect(page.getByText('Bookable times tested', { exact: true })).toBeVisible();
   const saved = await page.evaluate(() => localStorage.getItem('timezone-slot-proof:config'));
   expect(saved).toContain('America/New_York');
   expect([...origins]).toEqual(['http://127.0.0.1:4173']);
@@ -97,7 +131,7 @@ test('@claim:calendar-file-local calendar-file contents stay in the open page an
   await page.locator('#ics-file').setInputFiles({ name: 'private-availability.ics', mimeType: 'text/calendar', buffer: Buffer.from(calendarFixture) });
   await expect(page.locator('#ics-summary')).toContainText('private-availability.ics');
   await page.getByRole('button', { name: /Check booking hours/i }).last().click();
-  await expect(page.getByText('Starts tested', { exact: true })).toBeVisible();
+  await expect(page.getByText('Bookable times tested', { exact: true })).toBeVisible();
   const review = page.getByRole('button', { name: 'Copy review link' });
   await expect(review).toBeDisabled();
   const stored = await page.evaluate(() => Object.values(localStorage).join('|'));
@@ -124,7 +158,7 @@ test('@claim:normal-range-and-timezone-rules normal checks cover 18 months and p
   await expect(summary).toHaveAttribute('data-zone-count', '5');
   await expect(summary).toHaveAttribute('data-range-start', '2026-08-03');
   await expect(summary).toHaveAttribute('data-range-end', '2028-02-03');
-  await page.getByRole('button', { name: 'Show all starts' }).click();
+  await page.getByRole('button', { name: 'Show all bookable times' }).click();
   const firstRow = page.locator('tbody tr').first();
   await expect(firstRow).toContainText('Aug 3, 2026');
   await expect(firstRow).toContainText('9:00 AM');
@@ -139,11 +173,11 @@ test('@claim:no-scheduler-access normal and calendar-file checks never offer or 
   await page.locator('#host-zone').fill('America/New_York');
   await page.locator('#start-date').fill('2026-08-01');
   await page.getByRole('button', { name: /Check booking hours/i }).last().click();
-  await expect(page.getByText('Starts tested', { exact: true })).toBeVisible();
+  await expect(page.getByText('Bookable times tested', { exact: true })).toBeVisible();
   await page.locator('.source-switch label', { hasText: 'Import calendar file' }).click();
   await page.locator('#ics-file').setInputFiles({ name: 'private-availability.ics', mimeType: 'text/calendar', buffer: Buffer.from(calendarFixture) });
   await page.getByRole('button', { name: /Check booking hours/i }).last().click();
-  await expect(page.getByText('Starts tested', { exact: true })).toBeVisible();
+  await expect(page.getByText('Bookable times tested', { exact: true })).toBeVisible();
   expect(await page.locator('input[type="password"], [data-auth], [data-provider], a[href*="oauth" i], a[href*="login" i]').count()).toBe(0);
   expect([...origins]).toEqual(['http://127.0.0.1:4173']);
 });
@@ -162,8 +196,11 @@ test('result and error copy stays in booking-hours language', async ({ page }) =
   await expect(page.getByText('Check complete', { exact: false })).toBeVisible();
   await expect(page.getByText('Clock changes', { exact: true })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Bookable time problems' })).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'Booking-time table' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Bookable-time table' })).toBeVisible();
   await expect(page.locator('#results')).not.toContainText(/DST seams|Attention ledger|Test matrix|configuration proof|IANA/i);
+  await expect(page.locator('#results')).not.toContainText(/Starts tested|First flagged starts|Booking-time table|Show DST changes/i);
+  await expect(page.getByRole('button', { name: /Add booking-hours range/i })).toBeVisible();
+  await expect(page.locator('#proof-form')).not.toContainText(/Add window|booking-hours window/i);
   await page.getByRole('button', { name: 'Start for real' }).click();
   await page.locator('#host-zone').fill('not-a-time-zone');
   await page.getByRole('button', { name: /Check booking hours/i }).last().click();
@@ -175,7 +212,7 @@ test('routes, titles, focus, mobile layout, metadata, and accessibility work', a
   page.on('console', (message) => { if (message.type() === 'error') errors.push(message.text()); });
   page.on('pageerror', (error) => errors.push(error.message));
   await page.setViewportSize({ width: 390, height: 844 });
-  await mkdir('.factory/evidence-polish-3', { recursive: true });
+  await mkdir('.factory/evidence-polish-4', { recursive: true });
   await page.goto('/');
   await expect(page).toHaveTitle('Timezone Slot Proof — Check booking hours');
   expect(await page.locator('html').evaluate((node) => node.scrollWidth)).toBe(390);
@@ -183,27 +220,28 @@ test('routes, titles, focus, mobile layout, metadata, and accessibility work', a
   await expect(page).toHaveURL(/\?demo=1$/);
   await expect(page).toHaveTitle('Demo — Timezone Slot Proof');
   expect(await page.locator('html').evaluate((node) => node.scrollWidth)).toBe(390);
-  await expect(page.locator('#check-complete-heading')).toBeFocused();
-  const demoMetric = await page.getByText('Starts tested', { exact: true }).boundingBox();
+  await expect(page.locator('#demo-route-title')).toBeFocused();
+  expect(await page.locator('#demo-route-title').evaluate((node) => node.tagName)).toBe('H1');
+  const demoMetric = await page.getByText('Bookable times tested', { exact: true }).boundingBox();
   expect(demoMetric?.y).toBeGreaterThanOrEqual(0);
   expect((demoMetric?.y ?? 900) + (demoMetric?.height ?? 0)).toBeLessThanOrEqual(844);
-  await page.screenshot({ path: '.factory/evidence-polish-3/demo-mobile.png', fullPage: false });
+  await page.screenshot({ path: '.factory/evidence-polish-4/demo-mobile.png', fullPage: false });
   await page.goto('/privacy/');
   await expect(page.locator('h1')).toBeFocused();
   await page.goBack();
-  await expect(page.locator('#check-complete-heading')).toBeFocused();
+  await expect(page.locator('#demo-route-title')).toBeFocused();
   await page.goBack();
   await expect(page.locator('#hero-title')).toBeFocused();
   await page.goto('/privacy/');
   await expect(page).toHaveTitle('Privacy — Timezone Slot Proof');
   await expect(page.locator('h1')).toBeFocused();
-  await page.screenshot({ path: '.factory/evidence-polish-3/privacy-mobile.png', fullPage: false });
+  await page.screenshot({ path: '.factory/evidence-polish-4/privacy-mobile.png', fullPage: false });
   await page.goBack();
   await expect(page.locator('#hero-title')).toBeFocused();
   await page.goto('/no-such-proof');
   await expect(page).toHaveTitle('Page not found — Timezone Slot Proof');
   await expect(page.getByRole('heading', { name: 'Page not found' })).toBeVisible();
-  await page.screenshot({ path: '.factory/evidence-polish-3/not-found-mobile.png', fullPage: false });
+  await page.screenshot({ path: '.factory/evidence-polish-4/not-found-mobile.png', fullPage: false });
   expect(await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa']).analyze()).toEqual(expect.objectContaining({ violations: [] }));
   expect(errors).toEqual([]);
 });
@@ -215,6 +253,11 @@ test('every mobile link and button has a 44px target and every route uses the sh
     await expect(page.locator('.site-header .wordmark')).toBeVisible();
     await expect(page.locator('.site-header .wordmark-mark')).toBeVisible();
     await expect(page.locator('.site-header nav a')).toHaveCount(4);
+    const nav = page.locator('.site-header nav');
+    await expect(nav.getByRole('link', { name: 'Demo' })).toBeVisible();
+    await expect(nav.getByRole('link', { name: 'Privacy' })).toBeVisible();
+    await nav.getByRole('link', { name: 'Demo' }).focus();
+    await expect(nav.getByRole('link', { name: 'Demo' })).toBeFocused();
     await expect(page.locator('footer .footer-mark')).toBeVisible();
     const targets = await page.locator('a:visible, button:visible').evaluateAll((elements) => elements.map((element) => {
       const box = element.getBoundingClientRect();
@@ -224,5 +267,16 @@ test('every mobile link and button has a 44px target and every route uses the sh
       expect(target.height, `${route}: ${target.label}`).toBeGreaterThanOrEqual(44);
       expect(target.width, `${route}: ${target.label}`).toBeGreaterThanOrEqual(44);
     }
+  }
+});
+
+test('every public route passes the WCAG 2 A and AA axe sweep', async ({ page }) => {
+  for (const route of ['/', '/demo', '/privacy/', '/terms/', '/no-such-proof']) {
+    await page.goto(route);
+    await expect(page.locator('html')).toHaveAttribute('lang', 'en');
+    await expect(page.locator('main')).toHaveCount(1);
+    await expect(page.locator('h1')).toHaveCount(1);
+    const scan = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa']).analyze();
+    expect(scan.violations, route).toEqual([]);
   }
 });
