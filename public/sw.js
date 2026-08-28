@@ -1,6 +1,6 @@
-const CACHE = 'timezone-slot-proof-v4';
+const CACHE = 'timezone-slot-proof-v5';
 const BUILD_ASSETS = __BUILD_ASSETS__;
-const SHELL = ['/', '/demo', '/assets/time-slab-720.webp', '/favicon.svg', '/apple-touch-icon.svg', '/manifest.webmanifest', '/privacy/', '/terms/', ...BUILD_ASSETS];
+const SHELL = ['/', '/demo', '/assets/time-slab-720.webp', '/favicon.svg', '/apple-touch-icon.svg', '/manifest.webmanifest', '/route-mode.js', '/privacy/', '/terms/', ...BUILD_ASSETS];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(caches.open(CACHE).then((cache) => cache.addAll(SHELL)).then(() => self.skipWaiting()));

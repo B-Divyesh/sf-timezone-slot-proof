@@ -123,14 +123,14 @@ function validate(config: ProofConfig): string[] {
   const errors: string[] = [];
   if (!config.startDate) errors.push('Choose the first date to test.');
   if (activeSource() === 'weekly') {
-    if (!isValidZone(config.hostZone)) errors.push(`“${config.hostZone || 'blank'}” is not a supported IANA working timezone.`);
+    if (!isValidZone(config.hostZone)) errors.push('Enter a time-zone name such as America/New_York.');
     config.windows.forEach((window, index) => {
-      if (!window.days.length) errors.push(`Choose at least one day in working window ${index + 1}.`);
-      if (!window.start || !window.end || window.end <= window.start) errors.push(`Working window ${index + 1} must end later than it starts.`);
+      if (!window.days.length) errors.push(`Choose at least one day for booking-hours window ${index + 1}.`);
+      if (!window.start || !window.end || window.end <= window.start) errors.push(`Booking-hours window ${index + 1} must end later than it starts.`);
     });
   } else if (!icsEvents.length) errors.push('Choose an ICS file with at least one availability window.');
   if (!config.zones.length) errors.push('Add at least one client time zone.');
-  config.zones.forEach((zone) => { if (!isValidZone(zone)) errors.push(`“${zone || 'blank'}” is not a supported client time zone.`); });
+  config.zones.forEach((zone) => { if (!isValidZone(zone)) errors.push('Enter a client time-zone name such as America/New_York.'); });
   if (new Set(config.zones).size !== config.zones.length) errors.push('Each client time zone must be unique.');
   if (![15, 30, 45, 60, 90].includes(config.duration) || ![15, 30, 60].includes(config.interval)) errors.push('Choose a supported meeting length and start interval.');
   return errors;
@@ -175,6 +175,12 @@ function statusClass(flags: string[]): string {
   return 'success';
 }
 
+function rangeEndKey(start: string, months: number): string {
+  const [year, month, day] = start.split('-').map(Number);
+  const date = new Date(Date.UTC(year!, month! - 1 + months, day!));
+  return date.toISOString().slice(0, 10);
+}
+
 function summaryMarkup(): string {
   if (!result || !lastConfig) return '';
   const attention = result.shifted + result.missing + result.ambiguous;
@@ -188,13 +194,13 @@ function summaryMarkup(): string {
   const anomalies = result.rows.filter((row) => row.flags.some((flag) => ['shifted', 'missing', 'ambiguous'].includes(flag))).slice(0, 8);
   const sourceIsIcs = activeSource() === 'ics';
   return `
-    <div class="proof-header ${state}">
+    <div class="proof-header ${state}" data-range-start="${escapeHtml(lastConfig.startDate)}" data-range-end="${escapeHtml(rangeEndKey(lastConfig.startDate, lastConfig.months))}" data-zone-count="${lastConfig.zones.length}">
       <div>
-        <p class="eyebrow"><span>03</span> Proof generated · ${escapeHtml(new Date(result.generatedAt).toLocaleString())}</p>
-        <h2>${escapeHtml(heading)}</h2>
+        <p class="eyebrow"><span>03</span> Check complete · ${escapeHtml(new Date(result.generatedAt).toLocaleString())}</p>
+        <h2 id="check-complete-heading" tabindex="-1">${escapeHtml(heading)}</h2>
         <p>${result.rows.length.toLocaleString()} starts tested across ${lastConfig.zones.length} client time zone${lastConfig.zones.length === 1 ? '' : 's'} over 18 months.</p>
       </div>
-      <div class="proof-stamp"><span>${noRows ? 'Empty' : attention ? 'Review' : 'Clear'}</span><small>configuration proof</small></div>
+      <div class="proof-stamp"><span>${noRows ? 'Empty' : attention ? 'Review' : 'Clear'}</span><small>booking-hours check</small></div>
     </div>
     ${noRows ? '<p class="limit-warning"><strong>Nothing fell inside the test range.</strong> For ICS, choose an earlier test date or export future availability. For weekly hours, check the selected days and window.</p>' : ''}
     ${result.truncated ? '<p class="limit-warning"><strong>Result capped at 30,000 starts.</strong> Narrow the working windows or increase the interval for a complete export.</p>' : ''}
@@ -203,7 +209,7 @@ function summaryMarkup(): string {
       <div><dt>Shifted</dt><dd>${result.shifted.toLocaleString()}</dd></div>
       <div><dt>Skipped</dt><dd>${result.missing.toLocaleString()}</dd></div>
       <div><dt>Repeated</dt><dd>${result.ambiguous.toLocaleString()}</dd></div>
-      <div><dt>DST seams</dt><dd>${result.dstChanges.toLocaleString()}</dd></div>
+      <div><dt>Clock changes</dt><dd>${result.dstChanges.toLocaleString()}</dd></div>
     </dl>
     <div class="export-bar">
       <div><strong>Export this check</strong><span>Download every row, not just the rows below.</span></div>
@@ -213,30 +219,30 @@ function summaryMarkup(): string {
     </div>
     ${sourceIsIcs ? '<p class="share-note">Calendar-file contents stay local and are not added to review links. Export CSV to share this result.</p>' : ''}
     <section class="anomaly-ledger" aria-labelledby="ledger-title">
-      <div class="subheading"><h3 id="ledger-title">Attention ledger</h3><p>${anomalies.length ? 'First flagged starts, in chronological order.' : 'No shifted, skipped, or repeated starts in this configuration.'}</p></div>
+      <div class="subheading"><h3 id="ledger-title">Bookable time problems</h3><p>${anomalies.length ? 'First flagged starts, in chronological order.' : 'No shifted, skipped, or repeated starts in this check.'}</p></div>
       ${anomalies.length ? `<ol>${anomalies.map((row) => {
         const changed = row.cells.filter((cell) => cell.flag === 'shifted');
         const detail = row.note || changed.map((cell) => `${cell.zone}: ${cell.note}`).join(' ');
-        return `<li><span class="status ${statusClass(row.flags)}">${statusLabel(row.flags)}</span><strong>${escapeHtml(row.hostDateLabel)} · ${escapeHtml(row.hostLabel)}</strong><p>${escapeHtml(detail || 'Timezone offset boundary detected.')}</p></li>`;
-      }).join('')}</ol>` : noRows ? '<div class="ledger-clear"><span aria-hidden="true">→</span> Adjust the test range or availability source, then run the proof again.</div>' : '<div class="ledger-clear"><span aria-hidden="true">✓</span> Stable wall-time projection across the selected zones.</div>'}
+        return `<li><span class="status ${statusClass(row.flags)}">${statusLabel(row.flags)}</span><strong>${escapeHtml(row.hostDateLabel)} · ${escapeHtml(row.hostLabel)}</strong><p>${escapeHtml(detail || 'A clock change affects this bookable time.')}</p></li>`;
+      }).join('')}</ol>` : noRows ? '<div class="ledger-clear"><span aria-hidden="true">→</span> Adjust the test range or availability source, then check again.</div>' : '<div class="ledger-clear"><span aria-hidden="true">✓</span> No clock-change problems in the selected client time zones.</div>'}
     </section>
     <section class="matrix" aria-labelledby="matrix-title">
       <div class="matrix-toolbar">
-        <div><h3 id="matrix-title">Test matrix</h3><p>${selected.length.toLocaleString()} row${selected.length === 1 ? '' : 's'} in this view</p></div>
-        <div class="filter-group" role="group" aria-label="Filter test rows">
+        <div><h3 id="matrix-title">Booking-time table</h3><p>${selected.length.toLocaleString()} row${selected.length === 1 ? '' : 's'} in this view</p></div>
+        <div class="filter-group" role="group" aria-label="Filter booking-time rows">
           ${(['all', 'changes', 'problems'] as Filter[]).map((filter) => `<button type="button" data-filter="${filter}" aria-pressed="${currentFilter === filter}">${filter === 'all' ? 'Show all starts' : filter === 'changes' ? 'Show DST changes' : 'Show problems'}</button>`).join('')}
         </div>
       </div>
-      <div class="table-wrap" tabindex="0" aria-label="Scrollable timezone test matrix">
+      <div class="table-wrap" tabindex="0" aria-label="Scrollable booking-time table">
         <table>
-          <caption>Projected booking starts. Timezone abbreviations are shown under each wall time.</caption>
+          <caption>Projected bookable times. Time-zone abbreviations appear under each local time.</caption>
           <thead><tr><th scope="col">Status</th><th scope="col">Your hours<br /><small>${escapeHtml(lastConfig.hostZone)}</small></th>${lastConfig.zones.map((zone) => `<th scope="col">${escapeHtml(zone.replace(/_/g, ' '))}</th>`).join('')}</tr></thead>
           <tbody>${visible.length ? visible.map((row) => `<tr class="row-${statusClass(row.flags)}">
             <td><span class="status ${statusClass(row.flags)}">${statusLabel(row.flags)}</span></td>
             <th scope="row"><time>${escapeHtml(row.hostDateLabel)}<strong>${escapeHtml(row.hostLabel)}</strong></time></th>
             ${lastConfig!.zones.map((zone) => {
               const cell = row.cells.find((item) => item.zone === zone);
-              return cell ? `<td class="${cell.flag ? `cell-${cell.flag}` : ''}"><time>${escapeHtml(cell.dateLabel)}<strong>${escapeHtml(cell.label)}</strong><small>${escapeHtml(cell.abbreviation)}</small></time>${cell.flag ? `<span class="cell-flag">${cell.flag === 'shifted' ? '↕ shifted' : '◇ offset'}</span>` : ''}</td>` : '<td><strong>—</strong><small>invalid wall time</small></td>';
+              return cell ? `<td class="${cell.flag ? `cell-${cell.flag}` : ''}"><time>${escapeHtml(cell.dateLabel)}<strong>${escapeHtml(cell.label)}</strong><small>${escapeHtml(cell.abbreviation)}</small></time>${cell.flag ? `<span class="cell-flag">${cell.flag === 'shifted' ? '↕ shifted' : '◇ clock change'}</span>` : ''}</td>` : '<td><strong>—</strong><small>unavailable local time</small></td>';
             }).join('')}
           </tr>`).join('') : `<tr><td colspan="${lastConfig.zones.length + 2}" class="no-rows">No rows match this filter.</td></tr>`}</tbody>
         </table>
@@ -247,17 +253,18 @@ function summaryMarkup(): string {
         <button class="button text-button" type="button" data-page="next" ${page >= pages - 1 ? 'disabled' : ''}>Next →</button>
       </div>
     </section>
-    <p class="proof-caveat"><strong>What this check shows:</strong> how these booking hours appear using your browser’s current time-zone rules. Compare the CSV against your scheduler’s preview before publishing.</p>`;
+    <p class="proof-caveat"><strong>What this check shows:</strong> how these booking hours appear using your browser’s current time-zone rules. Compare the CSV with your booking page before publishing.</p>`;
 }
 
 function renderResults(focus = false): void {
   resultsElement.innerHTML = summaryMarkup();
   resultsElement.hidden = false;
   emptyResults.hidden = true;
+  if (demoMode) document.documentElement.classList.add('demo-ready');
   if (focus) {
-    resultsElement.setAttribute('tabindex', '-1');
-    resultsElement.focus({ preventScroll: true });
-    resultsElement.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
+    const heading = resultsElement.querySelector<HTMLElement>('#check-complete-heading');
+    (heading ?? resultsElement).focus({ preventScroll: true });
+    (heading ?? resultsElement).scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
   }
 }
 
@@ -312,8 +319,8 @@ async function readIcs(file: File): Promise<void> {
     icsEvents = parseIcs(text);
     icsName = file.name;
     const zones = [...new Set(icsEvents.map((event) => event.zone))];
-    if (zones.some((zone) => !isValidZone(zone))) throw new Error('The file contains an unsupported TZID. Export it again using an IANA timezone name such as America/New_York.');
-    if (zones.length > 1) throw new Error('This v1 accepts one common timezone per ICS file. Export the availability windows in a single timezone and try again.');
+    if (zones.some((zone) => !isValidZone(zone))) throw new Error('Use a time-zone name such as America/New_York in the calendar file, then export it again.');
+    if (zones.length > 1) throw new Error('Use one time zone in this calendar file, then export it again.');
     if (zones.length === 1) hostZone.value = zones[0]!;
     summary.innerHTML = `<strong>${escapeHtml(file.name)}</strong> · ${icsEvents.length} window${icsEvents.length === 1 ? '' : 's'} · ${zones.map(escapeHtml).join(', ')}`;
     showErrors([]);
@@ -427,6 +434,10 @@ function setupDemo(focus = false): void {
   runProof(focus);
 }
 
+function focusDemoResult(): void {
+  window.requestAnimationFrame(() => resultsElement.querySelector<HTMLElement>('#check-complete-heading')?.focus({ preventScroll: true }));
+}
+
 function routeName(): 'home' | 'demo' | 'not-found' {
   if (location.pathname === '/' || location.pathname === '/index.html') return new URLSearchParams(location.search).get('demo') === '1' ? 'demo' : 'home';
   if (location.pathname === '/demo' || location.pathname === '/demo/') return 'demo';
@@ -459,9 +470,10 @@ function initializeRoute(): void {
   setRouteMetadata(route);
   if (route === 'not-found') { renderNotFound(); return; }
   if (route === 'demo') {
+    document.documentElement.classList.add('demo-mode');
     $<HTMLElement>('#demo-banner').hidden = false;
     setupDemo(false);
-    $<HTMLElement>('#hero-title').focus();
+    focusDemoResult();
     $('#route-announcement').textContent = 'Demo loaded';
   }
 }
@@ -494,9 +506,14 @@ document.querySelector<HTMLButtonElement>('#start-real')?.addEventListener('clic
 
 window.addEventListener('popstate', () => {
   const route = routeName();
-  if (route === 'demo') { $<HTMLElement>('#demo-banner').hidden = false; setupDemo(false); }
+  if (route === 'demo') {
+    document.documentElement.classList.add('demo-mode');
+    $<HTMLElement>('#demo-banner').hidden = false;
+    setupDemo(false);
+    focusDemoResult();
+  }
   else if (route === 'home') { location.reload(); }
-  else renderNotFound();
+  else { document.documentElement.classList.remove('demo-mode'); renderNotFound(); }
 });
 
 function focusRestoredRoute(): void {

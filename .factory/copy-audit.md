@@ -1,6 +1,6 @@
-# Copy audit — 2026-08-28, polish 2
+# Copy audit — 2026-08-28, polish 3
 
-Every customer-facing sentence on the landing page and README is 22 words or fewer. No banned marketing words appear. Dynamic result text was checked with the sample check.
+Every customer-facing sentence on the landing page and README is 22 words or fewer. No banned marketing words appear. Dynamic result and validation text was checked with the sample check.
 
 ## Landing page
 
@@ -29,7 +29,14 @@ Every customer-facing sentence on the landing page and README is 22 words or few
 | 8 | 22 bookable times need a closer look. |
 | 6 | Download every row, not just the rows below. |
 | 12 | Calendar-file contents stay local and are not added to review links. |
-| 10 | Compare the CSV against your scheduler’s preview before publishing. |
+| 10 | Compare the CSV with your booking page before publishing. |
+| 4 | Check complete. |
+| 3 | Booking-hours check. |
+| 2 | Clock changes. |
+| 3 | Bookable time problems. |
+| 2 | Booking-time table. |
+| 10 | No clock-change problems in the selected client time zones. |
+| 9 | Enter a time-zone name such as America/New_York. |
 
 ## README
 
@@ -60,4 +67,4 @@ Every customer-facing sentence on the landing page and README is 22 words or few
 | Daylight-saving alert | clock-change flag |
 | Result | check |
 
-`Starts tested` remains a table metric for generated rows. It is not used as the name for the result.
+`Starts tested` remains a table metric for generated rows. It is not used as the name for the result. Result templates use **clock changes**, **bookable time problems**, and **booking-time table**. Validation asks for a **time-zone name**, not a standards term.

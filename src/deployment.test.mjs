@@ -46,4 +46,20 @@ describe('emitted Static Web Apps cache contract', () => {
     expect(config.routes.find((route) => route.route === '/demo')).toEqual({ route: '/demo', rewrite: '/demo/index.html' });
     expect(config.responseOverrides?.['404']).toEqual({ rewrite: '/404.html', statusCode: 404 });
   });
+
+  it('ships the same proof-board shell on every static route', () => {
+    const documents = ['index.html', 'demo/index.html', 'privacy/index.html', 'terms/index.html', '404.html']
+      .map((file) => readFileSync(dist(file), 'utf8'));
+    for (const html of documents) {
+      expect(html).toContain('<header class="site-header">');
+      expect(html).toContain('class="wordmark-mark"');
+      expect(html).toContain('<a href="/?demo=1">Demo</a>');
+      expect(html).toContain('>Check hours</a>');
+      expect(html).toContain('>Method</a>');
+      expect(html).toContain('>Privacy</a>');
+      expect(html).toContain('<div class="footer-mark"');
+      expect(html).toContain('>Terms</a>');
+      expect(html).toContain('Built by Param Factory');
+    }
+  });
 });

@@ -42,8 +42,8 @@ function makeRow(hostWall: WallTime, hostZone: string, zones: string[], duration
     id: `${sourceKey}:${start}`, start, end, hostWall,
     hostLabel: formatWallTime(hostWall), hostDateLabel: formatWallDate(hostWall), sourceKey,
     flags, cells,
-    note: flags.includes('ambiguous') ? 'This wall time occurs twice when the clock moves back.' :
-      flags.includes('missing') ? 'The meeting end falls in a skipped wall-time interval.' : undefined,
+    note: flags.includes('ambiguous') ? 'This local time occurs twice when clocks move back.' :
+      flags.includes('missing') ? 'The meeting ends during a time skipped when clocks move forward.' : undefined,
   };
 }
 
@@ -57,11 +57,11 @@ function annotateChanges(rows: SlotRow[]): void {
       if (prior && prior.minuteOfDay !== cell.minuteOfDay) {
         cell.flag = 'shifted';
         const delta = cell.minuteOfDay - prior.minuteOfDay;
-        cell.note = `Wall time shifted ${delta > 0 ? '+' : ''}${delta} minutes after a timezone offset change.`;
+        cell.note = `The local time moved ${delta > 0 ? '+' : ''}${delta} minutes after clocks changed.`;
         if (!row.flags.includes('shifted')) row.flags.push('shifted');
       } else if (prior && prior.offset !== cell.offset) {
         cell.flag = 'dst';
-        cell.note = `UTC offset changed from ${formatOffset(prior.offset)} to ${formatOffset(cell.offset)}; this slot stayed at the same wall time.`;
+        cell.note = 'Clocks changed, but this bookable time kept the same local time.';
         if (!row.flags.includes('dst')) row.flags.push('dst');
       }
       previous.set(key, cell);
