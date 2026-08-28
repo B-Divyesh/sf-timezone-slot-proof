@@ -93,3 +93,4 @@
 - A fresh mobile Chromium context passed the landing action, demo banner/reset/exit, visible demo h1 focus, 158/18/2/2 metrics, all three ledger states, clock-change filter, every-row CSV, review-link reopening, 44 px Demo/Privacy nav, and read-only shared view.
 - Fresh live checks passed for `/` (200), `/demo` (200), `/privacy/` (200), `/terms/` (200), and `/no-such-proof` (404). Every checked route had one h1, `lang="en"`, main, and zero WCAG 2 A/AA Axe violations.
 - Live verifier evidence: `evidence-polish-4/verify-live/verify.json`; screenshots: `live/live-demo-mobile.png`, `live/live-review-link.png`, `live/live-privacy-mobile.png`, and `live/live-not-found-mobile.png`.
+- The live `index-D5GiiDbd.js` SHA-256 exactly matched local `dist`: `8dc6b347e55bc8fa86d0ed3919a572508866e38a2ad3c58560af4fc2629c5bef`.

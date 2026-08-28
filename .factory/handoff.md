@@ -25,6 +25,7 @@
 - Lighthouse mobile demo: performance **99**, accessibility **100**, best practices **100**, SEO **100**; LCP **1.4 s**, TBT **140 ms**, CLS **0**. Evidence: `evidence-polish-4/lighthouse-demo-mobile.json`.
 - Live cold check passed for landing, `?demo=1`, `/demo`, Privacy, Terms, shared review link, and the branded 404. The live browser check verified 200/200/200/200/404 responses, one h1/main/lang on each route, exact 158/18/2/2 sample metrics, CSV completeness, h1 focus, 44 px mobile navigation, and zero Axe violations.
 - Live verifier: `verify-url.sh https://timezone-slot-proof.sociobot.in` passed with no console errors. Evidence: `evidence-polish-4/verify-live/verify.json`.
+- The deployed hashed JavaScript asset matched the local production build by SHA-256: `index-D5GiiDbd.js` = `8dc6b347e55bc8fa86d0ed3919a572508866e38a2ad3c58560af4fc2629c5bef`.
 
 ## Evidence
 
