@@ -4,40 +4,52 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="theme-color" content="#405d36" />
-    <meta name="description" content="Prove how your booking hours appear across time zones and daylight-saving changes before you publish them." />
+    <meta name="description" content="Check booking hours in five time zones before daylight saving changes surprise a client." />
     <link rel="canonical" href="https://timezone-slot-proof.sociobot.in/" />
-    <meta property="og:title" content="Timezone Slot Proof" />
-    <meta property="og:description" content="Inspect 18 months of booking slots across time zones and DST boundaries." />
-    <meta property="og:image" content="https://timezone-slot-proof.sociobot.in/assets/time-slab-1280.webp" />
+    <meta property="og:title" content="Timezone Slot Proof — Check booking hours" />
+    <meta property="og:description" content="Check booking hours in five time zones before daylight saving changes surprise a client." />
+    <meta property="og:image" content="https://timezone-slot-proof.sociobot.in/social-card.svg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Timezone Slot Proof — Check booking hours" />
+    <meta name="twitter:description" content="Check booking hours in five time zones before daylight saving changes surprise a client." />
+    <meta name="twitter:image" content="https://timezone-slot-proof.sociobot.in/social-card.svg" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.svg" />
     <link rel="manifest" href="/manifest.webmanifest" />
-    <title>Timezone Slot Proof — Inspect booking hours across DST</title>
+    <title>Timezone Slot Proof — Check booking hours</title>
   </head>
   <body>
-    <a class="skip-link" href="#main">Skip to validator</a>
+    <a class="skip-link" href="#main">Skip to main content</a>
     <header class="site-header">
       <a class="wordmark" href="/" aria-label="Timezone Slot Proof home">
         <span class="wordmark-mark" aria-hidden="true">T<span>Z</span></span>
         <span>Timezone<br />Slot Proof</span>
       </a>
       <nav aria-label="Primary">
-        <a href="#validator">Run a proof</a>
+        <a href="/demo">Demo</a>
+        <a href="#validator">Check hours</a>
         <a href="#method">Method</a>
       </nav>
       <span class="local-badge">Local only</span>
     </header>
 
+    <div id="route-announcement" class="sr-only" aria-live="polite" aria-atomic="true"></div>
     <main id="main">
+      <section id="demo-banner" class="demo-banner" role="status" hidden>
+        <p><strong>Demo — sample data, nothing is saved.</strong> This five-zone check is separate from your own booking hours.</p>
+        <div><button id="reset-demo" class="button text-button" type="button">Reset demo</button><button id="start-real" class="button secondary" type="button">Start for real</button></div>
+      </section>
       <section class="hero" aria-labelledby="hero-title">
         <div class="hero-copy">
-          <p class="eyebrow"><span>01</span> Before clients find the broken hour</p>
-          <h1 id="hero-title">Prove your slots survive the clock change.</h1>
-          <p class="lede">Turn working hours or an ICS availability file into an 18-month, five-zone inspection. See shifted, skipped, and repeated times before you publish a booking link.</p>
-          <a class="button primary hero-action" href="#validator">Inspect my hours <span aria-hidden="true">↓</span></a>
+          <p class="eyebrow"><span>01</span> Booking-time check</p>
+          <h1 id="hero-title" tabindex="-1">Check booking hours across time zones</h1>
+          <p class="lede">For independent professionals with booking links. Check how weekly booking hours appear before daylight saving changes.</p>
+          <div class="hero-actions"><a class="button primary hero-action" href="/demo">Try it with sample data <span aria-hidden="true">→</span></a><a class="button text-button" href="#validator">Set up my booking-hours check</a></div>
+          <p class="action-note">See a five-zone daylight-saving check right away.</p>
           <ul class="trust-line" aria-label="Product promises">
             <li>No calendar login</li>
-            <li>Runs in your browser</li>
-            <li>Exports the evidence</li>
+            <li>Runs in this browser</li>
+            <li>Export the check as CSV</li>
           </ul>
         </div>
         <figure class="hero-figure">
@@ -45,46 +57,46 @@
             <source media="(max-width: 720px)" srcset="/assets/time-slab-720.webp" />
             <img src="/assets/time-slab-1280.webp" srcset="/assets/time-slab-720.webp 720w, /assets/time-slab-1280.webp 1280w" sizes="(max-width: 760px) 100vw, 48vw" width="1280" height="853" fetchpriority="high" decoding="async" alt="Five parallel tracks cut into a concrete slab, with moss around aligned markers and one amber offset seam." />
           </picture>
-          <figcaption><span aria-hidden="true">↳</span> Five zones. One seasonal seam. Make it visible.</figcaption>
+          <figcaption><span aria-hidden="true">↳</span> Five time zones. One clock change. Check it.</figcaption>
         </figure>
       </section>
 
       <section class="validator" id="validator" aria-labelledby="validator-title">
         <div class="section-heading">
-          <p class="eyebrow"><span>02</span> Build the test</p>
-          <h2 id="validator-title">Describe what should be bookable</h2>
-          <p>Your data stays on this device. We calculate with the IANA timezone data built into your browser.</p>
+          <p class="eyebrow"><span>02</span> Add booking hours</p>
+          <h2 id="validator-title">Set up your booking-hours check</h2>
+          <p>Your configuration stays in this browser. The check uses your browser’s time-zone rules.</p>
         </div>
 
         <div id="connection-status" class="connection-status" role="status" hidden>
-          <strong>Offline, still working.</strong> The validator runs locally. Keep this tab open to export your result.
+          <strong>Offline and ready.</strong> The check runs in this browser. Keep this tab open to export a result.
         </div>
 
         <form id="proof-form" novalidate>
           <div class="source-panel">
             <fieldset class="source-switch">
-              <legend>Availability source</legend>
+              <legend>Booking hours source</legend>
               <label><input type="radio" name="source" value="weekly" checked /><span>Weekly hours</span></label>
-              <label><input type="radio" name="source" value="ics" /><span>Import ICS</span></label>
+              <label><input type="radio" name="source" value="ics" /><span>Import calendar file</span></label>
             </fieldset>
 
             <div id="weekly-source">
               <div class="field-row two-up">
                 <label class="field">
-                  <span>Your working timezone</span>
+                  <span>Your booking-hours time zone</span>
                   <input id="host-zone" name="host-zone" list="timezone-list" autocomplete="off" spellcheck="false" required />
-                  <small>The zone used by your booking-page configuration.</small>
+                  <small>Use the time zone set on your booking page.</small>
                 </label>
                 <label class="field">
                   <span>Test from</span>
                   <input id="start-date" name="start-date" type="date" required />
-                  <small>The proof always covers the next 18 months.</small>
+                  <small>The check covers the next 18 months.</small>
                 </label>
               </div>
 
               <fieldset class="hours-fieldset">
                 <div class="fieldset-heading">
-                  <legend>Weekly working windows</legend>
+                  <legend>Weekly booking hours</legend>
                   <button class="button text-button" id="add-window" type="button">+ Add window</button>
                 </div>
                 <div id="windows"></div>
@@ -94,8 +106,8 @@
             <div id="ics-source" hidden>
               <label class="drop-zone" for="ics-file" id="drop-zone">
                 <span class="drop-icon" aria-hidden="true">⇩</span>
-                <strong>Choose an .ics availability file</strong>
-                <span>VEVENT or AVAILABLE windows; weekly RRULE supported. No upload occurs.</span>
+                <strong>Choose an .ics calendar file</strong>
+                <span>Use a calendar export with availability entries. The file stays in this browser.</span>
                 <input id="ics-file" type="file" accept=".ics,text/calendar" />
               </label>
               <div id="ics-summary" class="ics-summary" role="status">No file selected.</div>
@@ -128,14 +140,14 @@
 
             <fieldset class="zones-fieldset">
               <legend>Invitee zones <span id="zone-count">3 / 5</span></legend>
-              <p class="field-help">Use IANA names. Add up to five places your clients book from.</p>
+              <p class="field-help">Use names such as America/New_York. Add up to five client time zones.</p>
               <div id="zones"></div>
               <button class="button text-button" id="add-zone" type="button">+ Add invitee zone</button>
             </fieldset>
 
             <div id="form-errors" class="form-errors" role="alert" aria-live="assertive" tabindex="-1" hidden></div>
-            <button class="button primary run-button" type="submit">Run 18-month proof <span aria-hidden="true">→</span></button>
-            <p class="run-note"><span aria-hidden="true">◉</span> Configuration check, not a guarantee of any scheduler’s behavior.</p>
+            <button class="button primary run-button" type="submit">Check booking hours <span aria-hidden="true">→</span></button>
+            <p class="run-note"><span aria-hidden="true">◉</span> Compare this check with your booking page before publishing.</p>
           </aside>
         </form>
       </section>
@@ -144,9 +156,9 @@
         <div id="empty-results" class="empty-results">
           <div class="registration-mark" aria-hidden="true"><i></i><i></i><i></i></div>
           <div>
-            <p class="eyebrow"><span>03</span> Proof board</p>
-            <h2 id="results-title">Your test matrix will land here</h2>
-            <p>Run the proof to trace every generated start time, isolate DST seams, and export a portable review.</p>
+            <p class="eyebrow"><span>03</span> Booking-time results</p>
+            <h2 id="results-title">Your booking-time check appears here</h2>
+            <p>Run a check to see bookable times, clock-change flags, and a CSV export.</p>
           </div>
         </div>
         <div id="results" hidden aria-live="polite"></div>
@@ -154,31 +166,31 @@
 
       <section class="method" id="method" aria-labelledby="method-title">
         <div>
-          <p class="eyebrow"><span>04</span> What the proof means</p>
-          <h2 id="method-title">A small test rig for civil time</h2>
+          <p class="eyebrow"><span>04</span> How the check works</p>
+          <h2 id="method-title">How booking hours change across time zones</h2>
         </div>
         <ol class="method-steps">
-          <li><span>1</span><div><h3>Generate</h3><p>Every valid meeting start is generated from your declared wall-clock window for the next 18 months.</p></div></li>
-          <li><span>2</span><div><h3>Project</h3><p>Each instant is projected into every selected IANA zone using the timezone rules in this browser.</p></div></li>
-          <li><span>3</span><div><h3>Compare</h3><p>Week-equivalent starts are compared. Shifts, skipped times, repeated times, and offset-only changes are marked.</p></div></li>
-          <li><span>4</span><div><h3>Carry</h3><p>Download the complete CSV or share a link that recreates the weekly-hours configuration without an account.</p></div></li>
+          <li><span>1</span><div><h3>Add hours</h3><p>Add the weekly times that people can book.</p></div></li>
+          <li><span>2</span><div><h3>Check zones</h3><p>See each bookable time in the client time zones you choose.</p></div></li>
+          <li><span>3</span><div><h3>Find changes</h3><p>Clock-change flags show shifted, skipped, and repeated bookable times.</p></div></li>
+          <li><span>4</span><div><h3>Export CSV</h3><p>Download the full check to compare with your booking page.</p></div></li>
         </ol>
         <aside class="caveat">
-          <strong>Keep the claim honest.</strong>
-          <p>This checks your intended configuration against browser timezone data. It cannot observe a third-party scheduler’s internal rules, overrides, busy calendars, or stale timezone database.</p>
+          <strong>What this check cannot verify</strong>
+          <p>It checks the hours you enter. It does not read your scheduler, calendar, overrides, or busy times.</p>
         </aside>
       </section>
     </main>
 
     <footer>
       <div class="footer-mark" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
-      <p><strong>Timezone Slot Proof</strong><br />A free, local-first utility from the Param Factory.</p>
+      <p><strong>Timezone Slot Proof</strong><br />Check booking hours across time zones before publishing.</p>
       <nav aria-label="Legal">
         <a href="/privacy/">Privacy</a>
         <a href="/terms/">Terms</a>
         <a href="#main">Back to top ↑</a>
       </nav>
-      <p class="generated-note">Hero imagery generated for this product with factory-image.</p>
+      <p class="generated-note">Built by Param Factory · build 2026.08.28 · Hero imagery generated for this product.</p>
     </footer>
 
     <datalist id="timezone-list"></datalist>

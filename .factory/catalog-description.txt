@@ -1,0 +1,1 @@
+Check booking hours across time zones before daylight saving surprises a client.

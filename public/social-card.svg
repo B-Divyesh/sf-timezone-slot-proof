@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title desc">
+  <title id="title">Timezone Slot Proof</title><desc id="desc">Concrete scheduling tracks with moss and an amber daylight-saving seam.</desc>
+  <rect width="1200" height="630" fill="#f2f0e8"/>
+  <g stroke="#171a16" stroke-width="8" fill="none"><rect x="54" y="54" width="1092" height="522"/><path d="M90 180h1020M90 315h1020M90 450h1020"/></g>
+  <g fill="#d7d4c7" stroke="#171a16" stroke-width="5"><rect x="110" y="125" width="760" height="72"/><rect x="175" y="260" width="820" height="72"/><rect x="110" y="395" width="710" height="72"/></g>
+  <g fill="#405d36"><circle cx="160" cy="161" r="27"/><circle cx="290" cy="296" r="27"/><circle cx="420" cy="431" r="27"/><circle cx="655" cy="161" r="27"/><circle cx="760" cy="296" r="27"/></g>
+  <path d="M880 100v395" stroke="#8b4b12" stroke-width="18"/><path d="M902 100v395" stroke="#f3d3a5" stroke-width="8"/>
+  <g fill="#171a16" font-family="Arial, Helvetica, sans-serif"><text x="92" y="110" font-size="39" font-weight="700">TIMEZONE SLOT PROOF</text><text x="92" y="548" font-size="29">CHECK BOOKING HOURS ACROSS TIME ZONES</text></g>
+</svg>

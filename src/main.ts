@@ -22,6 +22,12 @@ let lastConfig: ProofConfig | null = null;
 let currentFilter: Filter = 'changes';
 let page = 0;
 const pageSize = 100;
+const demoConfig: ProofConfig = {
+  hostZone: 'America/New_York', zones: ['Europe/London', 'Asia/Kolkata', 'Australia/Sydney', 'Asia/Tokyo', 'America/Sao_Paulo'],
+  startDate: '2026-08-01', months: 18, duration: 30, interval: 30,
+  windows: [{ id: 'demo-sunday', days: [0], start: '01:00', end: '03:30' }],
+};
+let demoMode = false;
 
 const $ = <T extends Element>(selector: string): T => {
   const element = document.querySelector<T>(selector);
@@ -139,7 +145,12 @@ function showErrors(errors: string[]): void {
 }
 
 function persist(config: ProofConfig): void {
+  if (demoMode) return;
   try { localStorage.setItem('timezone-slot-proof:config', JSON.stringify(config)); } catch { /* Storage may be disabled; the tool still works. */ }
+}
+
+function cloneConfig(config: ProofConfig): ProofConfig {
+  return { ...config, zones: [...config.zones], windows: config.windows.map((window) => ({ ...window, days: [...window.days] })) };
 }
 
 function filteredRows() {
@@ -195,12 +206,12 @@ function summaryMarkup(): string {
       <div><dt>DST seams</dt><dd>${result.dstChanges.toLocaleString()}</dd></div>
     </dl>
     <div class="export-bar">
-      <div><strong>Carry the proof</strong><span>Complete matrix, not just the rows below.</span></div>
+      <div><strong>Export this check</strong><span>Download every row, not just the rows below.</span></div>
       <button class="button secondary" type="button" data-action="csv">Export CSV</button>
       <button class="button secondary" type="button" data-action="copy" ${sourceIsIcs ? 'disabled title="Imported calendar contents are never put in links"' : ''}>Copy review link</button>
       <button class="button secondary" type="button" data-action="print">Print / PDF</button>
     </div>
-    ${sourceIsIcs ? '<p class="share-note">ICS contents stay local and are intentionally excluded from review links. Export CSV to share this result.</p>' : ''}
+    ${sourceIsIcs ? '<p class="share-note">Calendar-file contents stay local and are not added to review links. Export CSV to share this result.</p>' : ''}
     <section class="anomaly-ledger" aria-labelledby="ledger-title">
       <div class="subheading"><h3 id="ledger-title">Attention ledger</h3><p>${anomalies.length ? 'First flagged starts, in chronological order.' : 'No shifted, skipped, or repeated starts in this configuration.'}</p></div>
       ${anomalies.length ? `<ol>${anomalies.map((row) => {
@@ -236,7 +247,7 @@ function summaryMarkup(): string {
         <button class="button text-button" type="button" data-page="next" ${page >= pages - 1 ? 'disabled' : ''}>Next →</button>
       </div>
     </section>
-    <p class="proof-caveat"><strong>What this proves:</strong> the mathematical projection of this configuration using your browser’s current IANA data. Compare the CSV against your scheduler’s preview before publishing.</p>`;
+    <p class="proof-caveat"><strong>What this check shows:</strong> how these booking hours appear using your browser’s current time-zone rules. Compare the CSV against your scheduler’s preview before publishing.</p>`;
 }
 
 function renderResults(focus = false): void {
@@ -255,6 +266,28 @@ function showToast(message: string): void {
   toast.textContent = message;
   toast.hidden = false;
   window.setTimeout(() => { toast.hidden = true; }, 3200);
+}
+
+function setButtonText(button: HTMLButtonElement, busy: boolean): void {
+  button.disabled = busy;
+  button.innerHTML = busy ? 'Building the check…' : 'Check booking hours <span aria-hidden="true">→</span>';
+}
+
+function runProof(focus = true): void {
+  const config = collectConfig();
+  const errors = validate(config);
+  showErrors(errors);
+  if (errors.length) return;
+  try {
+    result = activeSource() === 'ics' ? generateIcs(config, icsEvents) : generateWeekly(config);
+    lastConfig = cloneConfig(config);
+    persist(lastConfig);
+    currentFilter = result.dstChanges || result.missing || result.ambiguous ? 'changes' : 'all';
+    page = 0;
+    renderResults(focus);
+  } catch (error) {
+    showErrors([error instanceof Error ? error.message : 'The booking-hours check could not be generated.']);
+  }
 }
 
 async function copyLink(): Promise<void> {
@@ -292,25 +325,11 @@ async function readIcs(file: File): Promise<void> {
 
 form.addEventListener('submit', (event) => {
   event.preventDefault();
-  const config = collectConfig();
-  const errors = validate(config);
-  showErrors(errors);
-  if (errors.length) return;
   const submit = form.querySelector<HTMLButtonElement>('[type="submit"]')!;
-  submit.disabled = true; submit.textContent = 'Building the matrix…';
+  setButtonText(submit, true);
   window.setTimeout(() => {
-    try {
-      result = activeSource() === 'ics' ? generateIcs(config, icsEvents) : generateWeekly(config);
-      lastConfig = { ...config, windows: config.windows.map((window) => ({ ...window, days: [...window.days] })) };
-      persist(lastConfig);
-      currentFilter = result.dstChanges || result.missing || result.ambiguous ? 'changes' : 'all';
-      page = 0;
-      renderResults(true);
-    } catch (error) {
-      showErrors([error instanceof Error ? error.message : 'The proof could not be generated.']);
-    } finally {
-      submit.disabled = false; submit.innerHTML = 'Run 18-month proof <span aria-hidden="true">→</span>';
-    }
+    runProof(true);
+    setButtonText(submit, false);
   }, 24);
 });
 
@@ -378,7 +397,7 @@ function restore(): void {
     try { config = decodeConfig(shared); showToast('Shared weekly-hours configuration loaded. Run the proof to verify it.'); }
     catch { showToast('That review link is damaged. Starting with a clean configuration.'); }
   }
-  if (!config) {
+  if (!config && !demoMode) {
     try { config = JSON.parse(localStorage.getItem('timezone-slot-proof:config') || 'null') as ProofConfig | null; } catch { config = null; }
   }
   hostZone.value = config?.hostZone && isValidZone(config.hostZone) ? config.hostZone : browserZone();
@@ -391,13 +410,86 @@ function restore(): void {
   }
 }
 
+function setupDemo(focus = false): void {
+  demoMode = true;
+  const config = cloneConfig(demoConfig);
+  hostZone.value = config.hostZone;
+  startDate.value = config.startDate;
+  windows = config.windows;
+  inviteeZones = config.zones;
+  duration.value = String(config.duration);
+  interval.value = String(config.interval);
+  (form.elements.namedItem('source') as RadioNodeList).value = 'weekly';
+  $<HTMLElement>('#weekly-source').hidden = false;
+  $<HTMLElement>('#ics-source').hidden = true;
+  icsEvents = []; icsName = '';
+  renderWindows(); renderZones();
+  runProof(focus);
+}
+
+function routeName(): 'home' | 'demo' | 'not-found' {
+  if (location.pathname === '/' || location.pathname === '/index.html') return new URLSearchParams(location.search).get('demo') === '1' ? 'demo' : 'home';
+  if (location.pathname === '/demo' || location.pathname === '/demo/') return 'demo';
+  return 'not-found';
+}
+
+function setRouteMetadata(route: ReturnType<typeof routeName>): void {
+  const title = route === 'demo' ? 'Demo — Timezone Slot Proof' : route === 'not-found' ? 'Page not found — Timezone Slot Proof' : 'Timezone Slot Proof — Check booking hours';
+  document.title = title;
+  document.querySelector('meta[name="description"]')?.setAttribute('content', route === 'demo' ? 'Try a five-zone daylight-saving booking-hours check with sample data.' : route === 'not-found' ? 'This Timezone Slot Proof page does not exist.' : 'Check booking hours in five time zones before daylight saving changes surprise a client.');
+  document.querySelector('link[rel="canonical"]')?.setAttribute('href', `https://timezone-slot-proof.sociobot.in${route === 'demo' ? '/demo' : route === 'not-found' ? '/404' : '/'}`);
+}
+
+function renderNotFound(): void {
+  const main = $<HTMLElement>('#main');
+  main.innerHTML = `<section class="not-found"><p class="eyebrow"><span>00</span> Missing route</p><h1 id="not-found-title" tabindex="-1">Page not found</h1><p>This page is not part of the booking-hours check.</p><a class="button primary" href="/">Go to the home page</a></section>`;
+  const title = $<HTMLElement>('#not-found-title');
+  title.focus();
+  $('#route-announcement').textContent = 'Page not found';
+}
+
+function initializeRoute(): void {
+  const route = routeName();
+  setRouteMetadata(route);
+  if (route === 'not-found') { renderNotFound(); return; }
+  if (route === 'demo') {
+    $<HTMLElement>('#demo-banner').hidden = false;
+    setupDemo(false);
+    $<HTMLElement>('#hero-title').focus();
+    $('#route-announcement').textContent = 'Demo loaded';
+  }
+}
+
 function updateConnection(): void {
   $<HTMLElement>('#connection-status').hidden = navigator.onLine;
 }
 
-renderTimezones(); restore(); renderWindows(); renderZones(); updateConnection();
+demoMode = routeName() === 'demo';
+renderTimezones(); restore(); renderWindows(); renderZones(); initializeRoute(); updateConnection();
 window.addEventListener('online', updateConnection);
 window.addEventListener('offline', updateConnection);
-if ('serviceWorker' in navigator && import.meta.env.PROD) window.addEventListener('load', () => { void navigator.serviceWorker.register('/sw.js'); });
+if ('serviceWorker' in navigator && import.meta.env.PROD) {
+  navigator.serviceWorker.addEventListener('message', (event) => {
+    if (event.data?.type === 'offline-shell-cached') document.documentElement.dataset.offlineReady = 'true';
+  });
+  window.addEventListener('load', () => {
+    void navigator.serviceWorker.register('/sw.js').then(async (registration) => {
+      await navigator.serviceWorker.ready;
+      const urls = [location.pathname, import.meta.url, ...performance.getEntriesByType('resource').map((entry) => entry.name)]
+        .filter((url) => new URL(url, location.href).origin === location.origin);
+      registration.active?.postMessage({ type: 'cache-runtime', urls });
+    });
+  });
+}
+
+$('#reset-demo').addEventListener('click', () => { setupDemo(true); showToast('Sample check reset.'); });
+$('#start-real').addEventListener('click', () => { location.assign('/'); });
+
+window.addEventListener('popstate', () => {
+  const route = routeName();
+  if (route === 'demo') { $<HTMLElement>('#demo-banner').hidden = false; setupDemo(false); }
+  else if (route === 'home') { location.reload(); }
+  else renderNotFound();
+});
 
 void icsName;
