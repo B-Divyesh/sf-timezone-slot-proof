@@ -518,7 +518,7 @@ window.addEventListener('popstate', () => {
 
 function focusRestoredRoute(): void {
   const route = routeName();
-  const heading = route === 'not-found' ? document.querySelector<HTMLElement>('#not-found-title') : document.querySelector<HTMLElement>('#hero-title');
+  const heading = route === 'demo' ? document.querySelector<HTMLElement>('#check-complete-heading') : route === 'not-found' ? document.querySelector<HTMLElement>('#not-found-title') : document.querySelector<HTMLElement>('#hero-title');
   if (!heading) return;
   window.requestAnimationFrame(() => {
     heading.focus({ preventScroll: true });

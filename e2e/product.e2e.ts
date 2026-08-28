@@ -188,6 +188,10 @@ test('routes, titles, focus, mobile layout, metadata, and accessibility work', a
   expect(demoMetric?.y).toBeGreaterThanOrEqual(0);
   expect((demoMetric?.y ?? 900) + (demoMetric?.height ?? 0)).toBeLessThanOrEqual(844);
   await page.screenshot({ path: '.factory/evidence-polish-3/demo-mobile.png', fullPage: false });
+  await page.goto('/privacy/');
+  await expect(page.locator('h1')).toBeFocused();
+  await page.goBack();
+  await expect(page.locator('#check-complete-heading')).toBeFocused();
   await page.goBack();
   await expect(page.locator('#hero-title')).toBeFocused();
   await page.goto('/privacy/');
