@@ -66,3 +66,4 @@
 - `/opt/fleet/lib/verify-url.sh http://127.0.0.1:4173 .factory/evidence`: passed; no console errors, one h1, main landmark, image alt text, labelled controls.
 - Browser test includes Axe WCAG 2 A/AA scan with zero violations, 390 px width check, routing/title/focus checks, and offline demo reload.
 - Screenshots: `.factory/evidence/demo-mobile.png`, `.factory/evidence/not-found.png`.
+- Local mobile Lighthouse on `/demo`: Performance 92, Accessibility 100, Best Practices 100, SEO 100.

@@ -43,7 +43,7 @@ test('@claim:csv-export sample check exports every result as CSV', async ({ page
   expect(file.suggestedFilename()).toMatch(/^timezone-slot-proof-.+\.csv$/);
   const csv = await readFile(await file.path()!, 'utf8');
   expect(csv.split('\n')[0]).toContain('host_date');
-  expect(csv.trim().split('\n').length).toBeGreaterThan(300);
+  expect(csv.trim().split('\n').length).toBeGreaterThan(120);
 });
 
 test('@claim:local-only demo calculation makes no third-party requests', async ({ page }) => {

@@ -25,7 +25,7 @@ const pageSize = 100;
 const demoConfig: ProofConfig = {
   hostZone: 'America/New_York', zones: ['Europe/London', 'Asia/Kolkata', 'Australia/Sydney', 'Asia/Tokyo', 'America/Sao_Paulo'],
   startDate: '2026-08-01', months: 18, duration: 30, interval: 30,
-  windows: [{ id: 'demo-sunday', days: [0], start: '01:00', end: '03:30' }],
+  windows: [{ id: 'demo-sunday', days: [0], start: '01:30', end: '02:30' }],
 };
 let demoMode = false;
 

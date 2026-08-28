@@ -15,6 +15,7 @@ The concrete-and-moss visual identity, static Vite deployment class, local-first
 - Every `.factory/claims.json` command was rerun from a clean clone after commit.
 - `/opt/fleet/lib/verify-url.sh http://127.0.0.1:4173 .factory/evidence` passed: 200, title, `lang`, one h1, main landmark, alts, labels, and no console errors.
 - Browser suite runs Axe WCAG 2 A/AA with zero violations, checks 390 px overflow, focus/title/route behavior, privacy requests, CSV output, demo isolation, and offline reload.
+- Local mobile Lighthouse on `/demo`: Performance 92, Accessibility 100, Best Practices 100, SEO 100 (`.factory/evidence/lighthouse.json`).
 - Local screenshots: `.factory/evidence/demo-mobile.png` and `.factory/evidence/not-found.png`.
 
 ## Run

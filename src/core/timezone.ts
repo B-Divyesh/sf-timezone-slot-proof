@@ -1,6 +1,8 @@
 import type { WallTime } from '../types';
 
 const formatterCache = new Map<string, Intl.DateTimeFormat>();
+const displayDateFormatter = new Intl.DateTimeFormat('en', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
+const displayTimeFormatter = new Intl.DateTimeFormat('en', { hour: 'numeric', minute: '2-digit', hourCycle: 'h12', timeZone: 'UTC' });
 
 function formatter(zone: string, withName = false): Intl.DateTimeFormat {
   const key = `${zone}:${withName}`;
@@ -112,11 +114,9 @@ export function addWallMinutes(wall: WallTime, minutes: number): WallTime {
 }
 
 export function formatWallDate(wall: WallTime): string {
-  return new Intl.DateTimeFormat('en', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' })
-    .format(Date.UTC(wall.year, wall.month - 1, wall.day));
+  return displayDateFormatter.format(Date.UTC(wall.year, wall.month - 1, wall.day));
 }
 
 export function formatWallTime(wall: WallTime): string {
-  return new Intl.DateTimeFormat('en', { hour: 'numeric', minute: '2-digit', hourCycle: 'h12', timeZone: 'UTC' })
-    .format(Date.UTC(2020, 0, 1, wall.hour, wall.minute));
+  return displayTimeFormatter.format(Date.UTC(2020, 0, 1, wall.hour, wall.minute));
 }
