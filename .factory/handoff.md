@@ -2,7 +2,7 @@
 
 ## Completed
 
-Repair commit: `REPAIR_COMMIT`.
+Repair commit: `69fdbf718c9ce5cf9a890de9ef6257b9dfa14493`.
 
 All findings in `.factory/review-1.md` are resolved and mapped in `.factory/polish-1.md`. The product now has an isolated, one-click five-zone DST demo at `/demo` and `?demo=1`, exact claim inventory/tests, truthful routes, branded not-found UI, complete metadata, legal-page shell/focus, mobile checks, and plain-language copy.
 
