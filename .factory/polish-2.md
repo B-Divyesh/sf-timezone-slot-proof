@@ -69,3 +69,4 @@
 - `/opt/fleet/lib/verify-url.sh http://127.0.0.1:4173 .factory/evidence-polish-2`: passed, with title, language, one h1, main landmark, labelled controls, alt text, and no console errors.
 - Screenshots: `evidence-polish-2/demo-mobile.png` and `evidence-polish-2/not-found.png`.
 - Static route-head evidence: `dist/demo/index.html` contains Demo title, canonical, OG title, and Twitter title; `dist/404.html` contains its own matching metadata.
+- Live cold recheck after deployment: `https://timezone-slot-proof.sociobot.in/?demo=1` returned 200 with the banner, Reset demo, Start for real, a five-zone result, 390 px width, preserved real storage, no demo storage keys, and no app-console errors. `/privacy/` focused its h1; Back focused `#hero-title`; `/this-route-must-not-exist` returned 404 with its own title and h1. Screenshot: `evidence-polish-2/live-demo-mobile.png`.

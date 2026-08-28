@@ -15,7 +15,7 @@
 - The browser suite includes `@axe-core/playwright` WCAG 2 A/AA with zero violations, 390 px width, route title/focus checks, offline reload, same-origin request capture, CSV download, and demo reset.
 - Clean clone: `/tmp/timezone-slot-proof-clean-bEooO1`, after `npm ci`, passed every declared command: `@claim:demo-isolation`, `@claim:dst-check`, `@claim:csv-export`, `@claim:local-only`, `@claim:no-login`, `@claim:offline-demo`, `@claim:normal-config-local`, and `@claim:calendar-file-local`.
 - `npm run build` produces `dist/`, including `dist/demo/index.html` with raw Demo title/canonical/OG/Twitter metadata and `dist/404.html` with matching 404 metadata.
-- `/opt/fleet/lib/verify-url.sh http://127.0.0.1:4173 .factory/evidence-polish-2` passed: title, `lang=en`, one h1, main landmark, alt text, labelled buttons, and no console errors. Screenshots: `evidence-polish-2/demo-mobile.png`, `evidence-polish-2/not-found.png`.
+- `/opt/fleet/lib/verify-url.sh http://127.0.0.1:4173 .factory/evidence-polish-2` passed: title, `lang=en`, one h1, main landmark, alt text, labelled buttons, and no console errors. Screenshots: `evidence-polish-2/demo-mobile.png`, `evidence-polish-2/not-found.png`, and `evidence-polish-2/live-demo-mobile.png`.
 - The standalone Axe CLI could not start its unconfigured Selenium Chrome binary in this worker. The pinned Playwright Axe check passed in the full browser suite instead.
 
 ## Run locally
@@ -29,8 +29,8 @@ npm run preview
 
 ## Deployment
 
-`main` has been pushed. The work-order deployment configuration is static, with `npm ci && npm test && npm run build` and `dist/` as its output. A cold live recheck is required after the Static Web App publish completes; at the time of this handoff update, the live host was still serving the prior deployment.
+Deployed through `/opt/fleet/lib/deploy-static.sh timezone-slot-proof dist` using the work-order static configuration. The existing Static Web App `sf-timezone-slot-proof` was reused. Cold live recheck passed at `https://timezone-slot-proof.sociobot.in/?demo=1`: HTTP 200, Demo title/metadata, banner/reset/start controls, completed five-zone result, preserved seeded normal storage, no demo storage keys, 390 px width, and no app-console errors. `/privacy/` focus and Back focus passed. An unknown URL returned HTTP 404 with the branded 404 title and h1.
 
 ## Known gaps
 
-None in the repository build or test suite. The only external dependency is propagation of the static-host deployment after the pushed commit.
+None.
