@@ -36,3 +36,25 @@
 ## Known gaps
 
 None.
+
+---
+
+# Review 5 handoff — 2026-08-28
+
+## Delivered
+
+- Performed an independent, read-only adversarial first-read review of the live product at 390 px and desktop.
+- Added `.factory/review-5.md`; no product code, assets, deployment configuration, or live state was changed.
+
+## Verification
+
+- Fresh clone: `/tmp/timezone-slot-proof-review5-bJEhyb`; ran `npm ci`.
+- Ran all 12 exact commands in `.factory/claims.json`; all passed.
+- Final `npm test` passed: 16 unit/deployment tests and 16 browser tests.
+- Live checks passed for `/`, `/demo`, `/privacy/`, `/terms/`, and an HTTP 404: metadata, one h1/main/lang, shared shell, focus restoration, headers, links, and mobile width.
+- Live Axe WCAG 2 A/AA scans had zero violations on those routes.
+- Live demo verification confirmed populated first viewport, banner/reset/exit, preserved pre-seeded real storage, same-origin-only requests, and cache-warmed offline reload.
+
+## Result
+
+Review 5 verdict: **PASS**. No known gaps or findings remain. Preserve the current claim and browser checks on later changes.
