@@ -1,8 +1,4 @@
 {
-  "navigationFallback": {
-    "rewrite": "/index.html",
-    "exclude": ["/assets/*", "/privacy/*", "/terms/*", "/404.html", "/*.svg", "/*.js", "/*.webmanifest"]
-  },
   "globalHeaders": {
     "Cache-Control": "public, max-age=0, must-revalidate",
     "X-Content-Type-Options": "nosniff",
@@ -11,6 +7,10 @@
     "Content-Security-Policy": "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'"
   },
   "routes": [
+    {
+      "route": "/demo",
+      "rewrite": "/demo/index.html"
+    },
     {
       "route": "/assets/*",
       "headers": {

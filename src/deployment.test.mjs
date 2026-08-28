@@ -28,4 +28,22 @@ describe('emitted Static Web Apps cache contract', () => {
     expect(headersFor(config, '/privacy/index.html')['Cache-Control']).toBe(revalidate);
     expect(headersFor(config, '/sw.js')['Cache-Control']).toBe(revalidate);
   });
+
+  it('ships a route-specific demo document and a real 404 override', () => {
+    const demo = readFileSync(dist('demo/index.html'), 'utf8');
+    const missing = readFileSync(dist('404.html'), 'utf8');
+    const config = JSON.parse(readFileSync(dist('staticwebapp.config.json'), 'utf8'));
+    for (const [html, title, canonical] of [
+      [demo, 'Demo — Timezone Slot Proof', 'https://timezone-slot-proof.sociobot.in/demo'],
+      [missing, 'Page not found — Timezone Slot Proof', 'https://timezone-slot-proof.sociobot.in/404'],
+    ]) {
+      expect(html).toContain(`<title>${title}</title>`);
+      expect(html).toContain(`rel="canonical" href="${canonical}"`);
+      expect(html).toContain(`property="og:title" content="${title}"`);
+      expect(html).toContain(`name="twitter:title" content="${title}"`);
+    }
+    expect(config.navigationFallback).toBeUndefined();
+    expect(config.routes.find((route) => route.route === '/demo')).toEqual({ route: '/demo', rewrite: '/demo/index.html' });
+    expect(config.responseOverrides?.['404']).toEqual({ rewrite: '/404.html', statusCode: 404 });
+  });
 });

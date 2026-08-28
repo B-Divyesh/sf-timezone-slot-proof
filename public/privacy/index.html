@@ -2,18 +2,18 @@
 <html lang="en">
   <head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="theme-color" content="#405d36" /><meta name="description" content="How Timezone Slot Proof handles booking-hours checks and browser storage." /><link rel="canonical" href="https://timezone-slot-proof.sociobot.in/privacy/" /><meta property="og:title" content="Privacy — Timezone Slot Proof" /><meta property="og:description" content="How Timezone Slot Proof handles booking-hours checks and browser storage." /><meta property="og:image" content="https://timezone-slot-proof.sociobot.in/social-card.svg" /><meta name="twitter:card" content="summary_large_image" /><meta name="twitter:title" content="Privacy — Timezone Slot Proof" /><meta name="twitter:description" content="How Timezone Slot Proof handles booking-hours checks and browser storage." /><meta name="twitter:image" content="https://timezone-slot-proof.sociobot.in/social-card.svg" /><link rel="icon" href="/favicon.svg" type="image/svg+xml" /><link rel="apple-touch-icon" href="/apple-touch-icon.svg" /><link rel="stylesheet" href="/legal.css" /><script defer src="/legal.js"></script><title>Privacy — Timezone Slot Proof</title></head>
   <body>
-    <a class="skip-link" href="#main">Skip to main content</a><header><a class="wordmark" href="/" aria-label="Timezone Slot Proof home">TIMEZONE<br />SLOT PROOF</a><nav aria-label="Primary"><a href="/demo">Demo</a><a href="/#validator">Check hours</a><a href="/privacy/" aria-current="page">Privacy</a></nav></header>
-    <main id="main">
+    <a class="skip-link" href="#main">Skip to main content</a><header><a class="wordmark" href="/" aria-label="Timezone Slot Proof home">TIMEZONE<br />SLOT PROOF</a><nav aria-label="Primary"><a href="/?demo=1">Demo</a><a href="/#validator">Check hours</a><a href="/privacy/" aria-current="page">Privacy</a></nav></header>
+    <div id="route-announcement" class="sr-only" aria-live="polite" aria-atomic="true"></div><main id="main">
       <h1>Privacy without a calendar login.</h1>
-      <p class="summary"><strong>Short version:</strong> your working hours, invitee zones, and imported ICS files are processed in your browser. We do not receive or store them.</p>
+      <p class="summary"><strong>Short version:</strong> your booking hours, client time zones, and imported calendar files are processed in your browser. The product does not upload them.</p>
       <h2>Data the tool uses</h2>
-      <p>The validator reads the schedule configuration you enter and, if you choose one, the contents of an ICS file. That processing happens locally on your device. Calendar files are not uploaded. We do not ask for calendar credentials, names, email addresses, or payment details.</p>
+      <p>The check reads the booking hours you enter and any calendar file you choose. It processes them on your device. Calendar files are not uploaded.</p>
       <h2>Storage on your device</h2>
-      <p>Your latest weekly configuration is saved in browser local storage so it can be restored on your next visit. The service worker may cache application files for offline use. Clear this site’s browser data to remove both. Imported ICS contents are held only in the open page and are not persisted.</p>
+      <p>Your latest weekly configuration is saved in this browser so it can be restored. Imported calendar-file contents stay only in the open page.</p>
       <h2>Review links and exports</h2>
-      <p>A review link encodes weekly configuration—including timezone names, days, and hours—after the <code>#</code> in the URL. Browsers do not send URL fragments to the server. Anyone you give that link to can read its configuration. ICS contents are never included in links. CSV exports are created locally and handled by your browser.</p>
+      <p>A review link contains weekly booking hours, client time zones, and dates. Calendar-file contents are never included. CSV exports are created in your browser.</p>
       <h2>Network and measurement</h2>
-      <p>The production host necessarily receives standard web request data such as IP address, user agent, requested path, and timestamp in short-lived infrastructure logs. The application contains no behavioral analytics, advertising, cross-site trackers, or third-party runtime scripts.</p>
+      <p>The sample check makes no third-party requests. The production host receives standard web request data in infrastructure logs.</p>
       <h2>Contact and changes</h2>
       <p>This product is operated by the Param Factory at Sociobot. Material policy changes will be posted here with a new effective date.</p>
       <p><strong>Effective:</strong> 27 August 2026.</p>

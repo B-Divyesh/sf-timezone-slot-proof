@@ -10,11 +10,11 @@ type Filter = 'all' | 'changes' | 'problems';
 
 const fallbackZones = ['UTC', 'America/New_York', 'America/Chicago', 'America/Denver', 'America/Los_Angeles', 'America/Toronto', 'America/Sao_Paulo', 'Europe/London', 'Europe/Paris', 'Europe/Berlin', 'Africa/Johannesburg', 'Asia/Dubai', 'Asia/Kolkata', 'Asia/Singapore', 'Asia/Tokyo', 'Australia/Sydney', 'Pacific/Auckland'];
 const allZones: string[] = typeof Intl.supportedValuesOf === 'function' ? Intl.supportedValuesOf('timeZone') : fallbackZones;
-const suggestedInviteeZones = ['Australia/Sydney', 'Asia/Tokyo', 'Europe/Paris', 'America/Los_Angeles', 'Africa/Johannesburg', 'Pacific/Auckland', 'America/Sao_Paulo'];
+const suggestedClientZones = ['Australia/Sydney', 'Asia/Tokyo', 'Europe/Paris', 'America/Los_Angeles', 'Africa/Johannesburg', 'Pacific/Auckland', 'America/Sao_Paulo'];
 const dayLabels = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
 let windows: WeeklyWindow[] = [{ id: crypto.randomUUID(), days: [1, 2, 3, 4, 5], start: '09:00', end: '17:00' }];
-let inviteeZones = ['America/New_York', 'Europe/London', 'Asia/Kolkata'];
+let clientZones = ['America/New_York', 'Europe/London', 'Asia/Kolkata'];
 let icsEvents: IcsEvent[] = [];
 let icsName = '';
 let result: ProofResult | null = null;
@@ -81,15 +81,15 @@ function renderWindows(): void {
 }
 
 function renderZones(): void {
-  zoneList.innerHTML = inviteeZones.map((zone, index) => `
+  zoneList.innerHTML = clientZones.map((zone, index) => `
     <div class="zone-row">
       <span class="zone-number">${index + 1}</span>
-      <label class="sr-only" for="zone-${index}">Invitee zone ${index + 1}</label>
+      <label class="sr-only" for="zone-${index}">Client time zone ${index + 1}</label>
       <input id="zone-${index}" class="zone-input" data-zone-index="${index}" list="timezone-list" value="${escapeHtml(zone)}" autocomplete="off" spellcheck="false" required />
-      <button class="icon-button remove-zone" type="button" data-zone-index="${index}" aria-label="Remove ${escapeHtml(zone)}" ${inviteeZones.length === 1 ? 'disabled' : ''}>×</button>
+      <button class="icon-button remove-zone" type="button" data-zone-index="${index}" aria-label="Remove ${escapeHtml(zone)}" ${clientZones.length === 1 ? 'disabled' : ''}>×</button>
     </div>`).join('');
-  $('#zone-count').textContent = `${inviteeZones.length} / 5`;
-  ($<HTMLButtonElement>('#add-zone')).disabled = inviteeZones.length >= 5;
+  $('#zone-count').textContent = `${clientZones.length} / 5`;
+  ($<HTMLButtonElement>('#add-zone')).disabled = clientZones.length >= 5;
 }
 
 function syncWindowState(): void {
@@ -103,7 +103,7 @@ function syncWindowState(): void {
 }
 
 function syncZoneState(): void {
-  inviteeZones = [...zoneList.querySelectorAll<HTMLInputElement>('.zone-input')].map((input) => input.value.trim());
+  clientZones = [...zoneList.querySelectorAll<HTMLInputElement>('.zone-input')].map((input) => input.value.trim());
 }
 
 function activeSource(): 'weekly' | 'ics' {
@@ -114,7 +114,7 @@ function collectConfig(): ProofConfig {
   syncWindowState();
   syncZoneState();
   return {
-    hostZone: hostZone.value.trim(), zones: inviteeZones, startDate: startDate.value,
+    hostZone: hostZone.value.trim(), zones: clientZones, startDate: startDate.value,
     months: 18, duration: Number(duration.value), interval: Number(interval.value), windows,
   };
 }
@@ -129,9 +129,9 @@ function validate(config: ProofConfig): string[] {
       if (!window.start || !window.end || window.end <= window.start) errors.push(`Working window ${index + 1} must end later than it starts.`);
     });
   } else if (!icsEvents.length) errors.push('Choose an ICS file with at least one availability window.');
-  if (!config.zones.length) errors.push('Add at least one invitee timezone.');
-  config.zones.forEach((zone) => { if (!isValidZone(zone)) errors.push(`“${zone || 'blank'}” is not a supported IANA invitee timezone.`); });
-  if (new Set(config.zones).size !== config.zones.length) errors.push('Each invitee timezone must be unique.');
+  if (!config.zones.length) errors.push('Add at least one client time zone.');
+  config.zones.forEach((zone) => { if (!isValidZone(zone)) errors.push(`“${zone || 'blank'}” is not a supported client time zone.`); });
+  if (new Set(config.zones).size !== config.zones.length) errors.push('Each client time zone must be unique.');
   if (![15, 30, 45, 60, 90].includes(config.duration) || ![15, 30, 60].includes(config.interval)) errors.push('Choose a supported meeting length and start interval.');
   return errors;
 }
@@ -180,7 +180,7 @@ function summaryMarkup(): string {
   const attention = result.shifted + result.missing + result.ambiguous;
   const noRows = result.rows.length === 0;
   const state = attention || noRows ? 'review' : 'clear';
-  const heading = noRows ? 'No slots were generated' : attention ? `${attention} slot${attention === 1 ? '' : 's'} need a closer look` : 'No shifted or invalid slots found';
+  const heading = noRows ? 'No bookable times were generated' : attention ? `${attention} bookable time${attention === 1 ? '' : 's'} need a closer look` : 'No shifted or invalid bookable times found';
   const selected = filteredRows();
   const pages = Math.max(1, Math.ceil(selected.length / pageSize));
   page = Math.min(page, pages - 1);
@@ -192,7 +192,7 @@ function summaryMarkup(): string {
       <div>
         <p class="eyebrow"><span>03</span> Proof generated · ${escapeHtml(new Date(result.generatedAt).toLocaleString())}</p>
         <h2>${escapeHtml(heading)}</h2>
-        <p>${result.rows.length.toLocaleString()} starts tested across ${lastConfig.zones.length} invitee zone${lastConfig.zones.length === 1 ? '' : 's'} over 18 months.</p>
+        <p>${result.rows.length.toLocaleString()} starts tested across ${lastConfig.zones.length} client time zone${lastConfig.zones.length === 1 ? '' : 's'} over 18 months.</p>
       </div>
       <div class="proof-stamp"><span>${noRows ? 'Empty' : attention ? 'Review' : 'Clear'}</span><small>configuration proof</small></div>
     </div>
@@ -209,7 +209,7 @@ function summaryMarkup(): string {
       <div><strong>Export this check</strong><span>Download every row, not just the rows below.</span></div>
       <button class="button secondary" type="button" data-action="csv">Export CSV</button>
       <button class="button secondary" type="button" data-action="copy" ${sourceIsIcs ? 'disabled title="Imported calendar contents are never put in links"' : ''}>Copy review link</button>
-      <button class="button secondary" type="button" data-action="print">Print / PDF</button>
+      <button class="button secondary" type="button" data-action="print">Print or save as PDF</button>
     </div>
     ${sourceIsIcs ? '<p class="share-note">Calendar-file contents stay local and are not added to review links. Export CSV to share this result.</p>' : ''}
     <section class="anomaly-ledger" aria-labelledby="ledger-title">
@@ -224,7 +224,7 @@ function summaryMarkup(): string {
       <div class="matrix-toolbar">
         <div><h3 id="matrix-title">Test matrix</h3><p>${selected.length.toLocaleString()} row${selected.length === 1 ? '' : 's'} in this view</p></div>
         <div class="filter-group" role="group" aria-label="Filter test rows">
-          ${(['all', 'changes', 'problems'] as Filter[]).map((filter) => `<button type="button" data-filter="${filter}" aria-pressed="${currentFilter === filter}">${filter === 'all' ? 'All starts' : filter === 'changes' ? 'DST changes' : 'Problems'}</button>`).join('')}
+          ${(['all', 'changes', 'problems'] as Filter[]).map((filter) => `<button type="button" data-filter="${filter}" aria-pressed="${currentFilter === filter}">${filter === 'all' ? 'Show all starts' : filter === 'changes' ? 'Show DST changes' : 'Show problems'}</button>`).join('')}
         </div>
       </div>
       <div class="table-wrap" tabindex="0" aria-label="Scrollable timezone test matrix">
@@ -351,13 +351,13 @@ zoneList.addEventListener('input', syncZoneState);
 zoneList.addEventListener('click', (event) => {
   const button = (event.target as HTMLElement).closest<HTMLButtonElement>('.remove-zone');
   if (!button) return;
-  syncZoneState(); inviteeZones.splice(Number(button.dataset.zoneIndex), 1); renderZones();
+  syncZoneState(); clientZones.splice(Number(button.dataset.zoneIndex), 1); renderZones();
 });
 
 $('#add-zone').addEventListener('click', () => {
   syncZoneState();
-  const nextZone = nextAvailableZone(inviteeZones, [...suggestedInviteeZones, ...allZones]);
-  if (inviteeZones.length < 5 && nextZone) inviteeZones.push(nextZone);
+  const nextZone = nextAvailableZone(clientZones, [...suggestedClientZones, ...allZones]);
+  if (clientZones.length < 5 && nextZone) clientZones.push(nextZone);
   renderZones();
   zoneList.querySelector<HTMLInputElement>('.zone-row:last-child input')?.select();
 });
@@ -404,7 +404,7 @@ function restore(): void {
   startDate.value = config?.startDate || todayKey();
   if (config) {
     windows = config.windows?.length ? config.windows.map((window) => ({ ...window, id: window.id || crypto.randomUUID() })) : windows;
-    inviteeZones = config.zones?.slice(0, 5) || inviteeZones;
+    clientZones = config.zones?.slice(0, 5) || clientZones;
     duration.value = String(config.duration || 30);
     interval.value = String(config.interval || 30);
   }
@@ -416,7 +416,7 @@ function setupDemo(focus = false): void {
   hostZone.value = config.hostZone;
   startDate.value = config.startDate;
   windows = config.windows;
-  inviteeZones = config.zones;
+  clientZones = config.zones;
   duration.value = String(config.duration);
   interval.value = String(config.interval);
   (form.elements.namedItem('source') as RadioNodeList).value = 'weekly';
@@ -435,9 +435,15 @@ function routeName(): 'home' | 'demo' | 'not-found' {
 
 function setRouteMetadata(route: ReturnType<typeof routeName>): void {
   const title = route === 'demo' ? 'Demo — Timezone Slot Proof' : route === 'not-found' ? 'Page not found — Timezone Slot Proof' : 'Timezone Slot Proof — Check booking hours';
+  const description = route === 'demo' ? 'Try a five-zone daylight-saving booking-hours check with sample data.' : route === 'not-found' ? 'This Timezone Slot Proof page does not exist.' : 'Check booking hours in five time zones before daylight saving changes surprise a client.';
+  const canonical = `https://timezone-slot-proof.sociobot.in${route === 'demo' ? '/demo' : route === 'not-found' ? '/404' : '/'}`;
   document.title = title;
-  document.querySelector('meta[name="description"]')?.setAttribute('content', route === 'demo' ? 'Try a five-zone daylight-saving booking-hours check with sample data.' : route === 'not-found' ? 'This Timezone Slot Proof page does not exist.' : 'Check booking hours in five time zones before daylight saving changes surprise a client.');
-  document.querySelector('link[rel="canonical"]')?.setAttribute('href', `https://timezone-slot-proof.sociobot.in${route === 'demo' ? '/demo' : route === 'not-found' ? '/404' : '/'}`);
+  document.querySelector('meta[name="description"]')?.setAttribute('content', description);
+  document.querySelector('link[rel="canonical"]')?.setAttribute('href', canonical);
+  document.querySelector('meta[property="og:title"]')?.setAttribute('content', title);
+  document.querySelector('meta[property="og:description"]')?.setAttribute('content', description);
+  document.querySelector('meta[name="twitter:title"]')?.setAttribute('content', title);
+  document.querySelector('meta[name="twitter:description"]')?.setAttribute('content', description);
 }
 
 function renderNotFound(): void {
@@ -491,6 +497,21 @@ window.addEventListener('popstate', () => {
   if (route === 'demo') { $<HTMLElement>('#demo-banner').hidden = false; setupDemo(false); }
   else if (route === 'home') { location.reload(); }
   else renderNotFound();
+});
+
+function focusRestoredRoute(): void {
+  const route = routeName();
+  const heading = route === 'not-found' ? document.querySelector<HTMLElement>('#not-found-title') : document.querySelector<HTMLElement>('#hero-title');
+  if (!heading) return;
+  window.requestAnimationFrame(() => {
+    heading.focus({ preventScroll: true });
+    $('#route-announcement').textContent = route === 'demo' ? 'Demo loaded' : route === 'not-found' ? 'Page not found' : 'Home loaded';
+  });
+}
+
+window.addEventListener('pageshow', (event) => {
+  const navigation = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming | undefined;
+  if (event.persisted || navigation?.type === 'back_forward') focusRestoredRoute();
 });
 
 void icsName;

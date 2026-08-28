@@ -4,7 +4,7 @@ Check booking hours across time zones before daylight saving surprises a client.
 
 Live: <https://timezone-slot-proof.sociobot.in>
 
-Try the five-zone sample at <https://timezone-slot-proof.sociobot.in/demo>. The sample starts with a completed check. It is separate from your saved booking hours.
+Try the five-zone sample at <https://timezone-slot-proof.sociobot.in/?demo=1>. The sample starts with a completed check. It is separate from your saved booking hours.
 
 ## What v1 includes
 
@@ -39,7 +39,7 @@ For a browser smoke test, serve the build and run the factory verifier if availa
 
 ## Privacy
 
-The check runs in the browser. The app makes no third-party runtime requests. Normal weekly configuration can be saved in local storage. Calendar-file contents stay in the open page and are not put in review links. See [Privacy](public/privacy/index.html) and [Terms](public/terms/index.html).
+The sample check makes no third-party requests. Weekly booking hours can be saved in this browser. Calendar-file contents stay in the open page and never enter review links. See [Privacy](https://timezone-slot-proof.sociobot.in/privacy/) and [Terms](https://timezone-slot-proof.sociobot.in/terms/).
 
 ## Project notes
 
