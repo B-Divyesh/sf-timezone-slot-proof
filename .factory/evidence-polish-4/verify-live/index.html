@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#405d36" />
+    <meta name="description" content="Check booking hours in five time zones before daylight saving changes surprise a client." />
+    <link rel="canonical" href="https://timezone-slot-proof.sociobot.in/" />
+    <meta property="og:title" content="Timezone Slot Proof — Check booking hours" />
+    <meta property="og:description" content="Check booking hours in five time zones before daylight saving changes surprise a client." />
+    <meta property="og:image" content="https://timezone-slot-proof.sociobot.in/social-card.svg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Timezone Slot Proof — Check booking hours" />
+    <meta name="twitter:description" content="Check booking hours in five time zones before daylight saving changes surprise a client." />
+    <meta name="twitter:image" content="https://timezone-slot-proof.sociobot.in/social-card.svg" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.svg" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <script src="/route-mode.js"></script>
+    <title>Timezone Slot Proof — Check booking hours</title>
+    <script type="module" crossorigin src="/assets/index-D5GiiDbd.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-C7cSYiPO.css">
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to main content</a>
+    <header class="site-header">
+      <a class="wordmark" href="/" aria-label="Timezone Slot Proof home">
+        <span class="wordmark-mark" aria-hidden="true">T<span>Z</span></span>
+        <span>Timezone<br />Slot Proof</span>
+      </a>
+      <nav aria-label="Primary">
+        <a href="/?demo=1">Demo</a>
+        <a href="#validator">Check hours</a>
+        <a href="#method">Method</a>
+        <a href="/privacy/">Privacy</a>
+      </nav>
+      <span class="local-badge">Local only</span>
+    </header>
+
+    <div id="route-announcement" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+    <main id="main">
+      <section id="demo-banner" class="demo-banner" role="status" hidden>
+        <div id="demo-route-heading"><p class="route-banner-title">Sample booking-hours check</p></div>
+        <p><strong>Demo — sample data, nothing is saved.</strong> This five-zone check is separate from your own booking hours.</p>
+        <div><button id="reset-demo" class="button text-button" type="button">Reset demo</button><button id="start-real" class="button secondary" type="button">Start for real</button></div>
+      </section>
+      <section id="review-banner" class="review-banner" hidden>
+        <div>
+          <p class="eyebrow"><span>03</span> Shared check</p>
+          <div id="review-route-heading"></div>
+          <p><strong>Read-only weekly booking-hours check.</strong> It opens with the shared booking hours. It contains no calendar file.</p>
+        </div>
+        <a class="button secondary" href="/#validator">Set up your booking-hours check</a>
+      </section>
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="hero-copy">
+          <p class="eyebrow"><span>01</span> Booking-time check</p>
+          <h1 id="hero-title" tabindex="-1">Check booking hours across time zones</h1>
+          <p class="lede">For independent professionals with booking links. Check how weekly booking hours appear before daylight saving changes.</p>
+          <div class="hero-actions"><a class="button primary hero-action" href="/?demo=1">Try it with sample data <span aria-hidden="true">→</span></a><a class="button text-button" href="#validator">Set up my booking-hours check</a></div>
+          <p class="action-note">See a five-zone daylight-saving check right away.</p>
+          <ul class="trust-line" aria-label="Product promises">
+            <li>Sample needs no calendar login</li>
+            <li>Sample runs in this browser</li>
+            <li>Export the check as CSV</li>
+          </ul>
+        </div>
+        <figure class="hero-figure">
+          <picture>
+            <source media="(max-width: 720px)" srcset="/assets/time-slab-720.webp" />
+            <img src="/assets/time-slab-1280.webp" srcset="/assets/time-slab-720.webp 720w, /assets/time-slab-1280.webp 1280w" sizes="(max-width: 760px) 100vw, 48vw" width="1280" height="853" fetchpriority="high" decoding="async" alt="Five parallel tracks cut into a concrete slab, with moss around aligned markers and one amber offset seam." />
+          </picture>
+          <figcaption><span aria-hidden="true">↳</span> Five time zones. Clock changes. Check it.</figcaption>
+        </figure>
+      </section>
+
+      <section class="validator" id="validator" aria-labelledby="validator-title">
+        <div class="section-heading">
+          <p class="eyebrow"><span>02</span> Add booking hours</p>
+          <h2 id="validator-title">Set up your booking-hours check</h2>
+          <p>Your booking hours stay in this browser. The check uses your browser’s time-zone rules.</p>
+        </div>
+
+        <div id="connection-status" class="connection-status" role="status" hidden>
+          <strong>Offline and ready.</strong> The check runs in this browser. Keep this tab open to export a result.
+        </div>
+
+        <form id="proof-form" novalidate>
+          <div class="source-panel">
+            <fieldset class="source-switch">
+              <legend>Booking hours source</legend>
+              <label><input type="radio" name="source" value="weekly" checked /><span>Weekly hours</span></label>
+              <label><input type="radio" name="source" value="ics" /><span>Import calendar file</span></label>
+            </fieldset>
+
+            <div id="weekly-source">
+              <div class="field-row two-up">
+                <label class="field">
+                  <span>Your booking-hours time zone</span>
+                  <input id="host-zone" name="host-zone" list="timezone-list" autocomplete="off" spellcheck="false" required />
+                  <small>Use the time zone set on your booking page.</small>
+                </label>
+                <label class="field">
+                  <span>Test from</span>
+                  <input id="start-date" name="start-date" type="date" required />
+                  <small>The check covers the next 18 months.</small>
+                </label>
+              </div>
+
+              <fieldset class="hours-fieldset">
+                <div class="fieldset-heading">
+                  <legend>Weekly booking hours</legend>
+                  <button class="button text-button" id="add-window" type="button">+ Add booking-hours range</button>
+                </div>
+                <div id="windows"></div>
+              </fieldset>
+            </div>
+
+            <div id="ics-source" hidden>
+              <label class="drop-zone" for="ics-file" id="drop-zone">
+                <span class="drop-icon" aria-hidden="true">⇩</span>
+                <strong>Choose an .ics calendar file</strong>
+                <span>Use a calendar export with availability entries. The file stays in this browser.</span>
+                <input id="ics-file" type="file" accept=".ics,text/calendar" />
+              </label>
+              <div id="ics-summary" class="ics-summary" role="status">No file selected.</div>
+            </div>
+          </div>
+
+          <aside class="scenario-panel" aria-labelledby="scenario-title">
+            <div class="panel-number" aria-hidden="true">A—B</div>
+            <h3 id="scenario-title">Test conditions</h3>
+            <div class="field-row two-up compact">
+              <label class="field">
+                <span>Meeting length</span>
+                <select id="duration" name="duration">
+                  <option value="15">15 min</option>
+                  <option value="30" selected>30 min</option>
+                  <option value="45">45 min</option>
+                  <option value="60">60 min</option>
+                  <option value="90">90 min</option>
+                </select>
+              </label>
+              <label class="field">
+                <span>Time between bookable times</span>
+                <select id="interval" name="interval">
+                  <option value="15">15 min</option>
+                  <option value="30" selected>30 min</option>
+                  <option value="60">60 min</option>
+                </select>
+              </label>
+            </div>
+
+            <fieldset class="zones-fieldset">
+              <legend>Client time zones <span id="zone-count">3 / 5</span></legend>
+              <p class="field-help">Use names such as America/New_York. Add up to five client time zones.</p>
+              <div id="zones"></div>
+              <button class="button text-button" id="add-zone" type="button">+ Add client time zone</button>
+            </fieldset>
+
+            <div id="form-errors" class="form-errors" role="alert" aria-live="assertive" tabindex="-1" hidden></div>
+            <button class="button primary run-button" type="submit">Check booking hours <span aria-hidden="true">→</span></button>
+            <p class="run-note"><span aria-hidden="true">◉</span> Compare this check with your booking page before publishing.</p>
+          </aside>
+        </form>
+      </section>
+
+      <section id="results-shell" class="results-shell" aria-labelledby="results-title">
+        <div id="empty-results" class="empty-results">
+          <div class="registration-mark" aria-hidden="true"><i></i><i></i><i></i></div>
+          <div>
+            <p class="eyebrow"><span>03</span> Booking-time results</p>
+            <h2 id="results-title">Your booking-time check appears here</h2>
+            <p>Run a check to see bookable times, clock-change flags, and a CSV export.</p>
+          </div>
+        </div>
+        <div id="results" hidden aria-live="polite"></div>
+      </section>
+
+      <section class="method" id="method" aria-labelledby="method-title">
+        <div>
+          <p class="eyebrow"><span>04</span> How the check works</p>
+          <h2 id="method-title">How booking hours change across time zones</h2>
+        </div>
+        <ol class="method-steps">
+          <li><span>1</span><div><h3>Add hours</h3><p>Add the weekly times that people can book.</p></div></li>
+          <li><span>2</span><div><h3>Check zones</h3><p>See each bookable time in the client time zones you choose.</p></div></li>
+          <li><span>3</span><div><h3>Find changes</h3><p>Clock-change flags show shifted, skipped, and repeated bookable times.</p></div></li>
+          <li><span>4</span><div><h3>Export CSV</h3><p>Download the full check to compare with your booking page.</p></div></li>
+        </ol>
+        <aside class="caveat">
+          <strong>What this check cannot verify</strong>
+          <p>It checks the hours you enter. It does not read your scheduler, calendar, overrides, or busy times.</p>
+        </aside>
+      </section>
+    </main>
+
+    <footer>
+      <div class="footer-mark" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
+      <p><strong>Timezone Slot Proof</strong><br />Check booking hours across time zones before publishing.</p>
+      <nav aria-label="Legal">
+        <a href="/privacy/">Privacy</a>
+        <a href="/terms/">Terms</a>
+        <a href="#main">Back to top ↑</a>
+      </nav>
+      <p class="generated-note">Built by Param Factory · build 2026.08.28 · Hero imagery generated for this product.</p>
+    </footer>
+
+    <datalist id="timezone-list"></datalist>
+    <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+  </body>
+</html>

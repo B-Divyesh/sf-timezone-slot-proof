@@ -1,35 +1,37 @@
-# Timezone Slot Proof — adversarial review 4 handoff
+# Timezone Slot Proof — polish round 4 handoff
 
 ## Delivered
 
-- Wrote `.factory/review-4.md` with a **FAIL** verdict and seven concrete findings.
-- Did not modify product code or deployment configuration.
-- Rechecked every finding from reviews 1–3 and polish records 1–3 against the live site and current source.
+- Repaired release candidate `15d788906a7df9e9462ced43f5afdee36e6fdbd7` in commit `461d796b56fccef65e0c58cd10264f4ece494141`.
+- Made **Copy review link** a real completed weekly check: the URL contains only weekly configuration, opens the matching result, is read-only, and never carries calendar-file content.
+- Removed remaining `DST`, `window`, and `starts` visitor vocabulary. Results now consistently use clock changes, booking-hours ranges, and bookable times.
+- Strengthened claims: sample state counts and ledger rows are exact; CSV data rows must equal every generated bookable time; the new review-link capability has its own claim and test.
+- Added a visible demo route h1 with route focus, retained the populated result in the first 390 px viewport, and kept compact Demo and Privacy navigation visible and keyboard-reachable on phone routes.
+- Kept the concrete-and-moss proof-board visual system, static Vite artifact class, local-first demo/storage model, legal routes, metadata, HTTP 404, and original asset provenance.
+- Updated the catalog description, demo contract, copy audit, claim inventory, and complete finding map in `.factory/polish-4.md`.
 
-## Verification performed
+## Deployment
 
-- Fresh Chromium cold reads at 390 × 844 and 1440 × 1000.
-- Live demo, first viewport, Reset, Start for real, real-storage isolation, same-origin traffic, and offline reload.
-- Live route/metadata/link/status crawl for Home, Demo, Privacy, Terms, 404, social image, icons, robots, and sitemap.
-- Back focus, reduced motion, mobile overflow, and 44 px target checks.
-- Playwright Axe WCAG 2 A/AA scans across all local routes: zero violations.
-- Live `verify-url.sh`: passed.
-- `npm test`: passed — 16 unit/deployment tests and 14 Playwright tests.
-- Clean clone `/tmp/timezone-slot-proof-review4-clean`: `npm ci` and all 11 exact commands from `.factory/claims.json` passed independently.
-- Local/live HTML, hashed JS, and hashed CSS SHA-256 values matched.
+- Static Web Apps deployment: `5c38ccbc-fea7-4fa6-9aa5-6de40fefc43c`.
+- Live URL: <https://timezone-slot-proof.sociobot.in>.
+- Repair commit was pushed to `origin/main` before deployment.
 
-## Findings left for repair
+## Verification
 
-- Blockers: misleading/untested review link (reopened F-1-31), remaining `DST` jargon (reopened F-1-8), and inconsistent `window`/`starts` vocabulary (reopened F-1-12).
-- High: `dst-check` does not assert marked state values; CSV completeness copy lacks an exact claim/equality test.
-- Medium: Demo focuses an h2 instead of its route h1; the 390 px header hides all primary navigation.
+- Local `npm test`: passed — 16 unit/deployment tests and 16 Playwright tests.
+- Fresh clone: `/tmp/timezone-slot-proof-polish4-TUDSVb`; `npm ci`, every one of the 12 exact `.factory/claims.json` commands, and a final full `npm test` all passed. The full fresh-clone suite also reported 16 unit/deployment and 16 Playwright tests.
+- Local verifier: `verify-url.sh http://127.0.0.1:4173` passed with one h1, `lang=en`, main, image alt text, labelled buttons, and no console errors. Evidence: `evidence-polish-4/verify-local/verify.json`.
+- Local Axe WCAG 2 A/AA sweep passed on home, demo, Privacy, Terms, and 404. The same fresh live browser sweep passed on those routes.
+- Lighthouse mobile demo: performance **99**, accessibility **100**, best practices **100**, SEO **100**; LCP **1.4 s**, TBT **140 ms**, CLS **0**. Evidence: `evidence-polish-4/lighthouse-demo-mobile.json`.
+- Live cold check passed for landing, `?demo=1`, `/demo`, Privacy, Terms, shared review link, and the branded 404. The live browser check verified 200/200/200/200/404 responses, one h1/main/lang on each route, exact 158/18/2/2 sample metrics, CSV completeness, h1 focus, 44 px mobile navigation, and zero Axe violations.
+- Live verifier: `verify-url.sh https://timezone-slot-proof.sociobot.in` passed with no console errors. Evidence: `evidence-polish-4/verify-live/verify.json`.
 
-## Reproduce
+## Evidence
 
-```sh
-npm ci
-npm test
-/opt/fleet/lib/verify-url.sh https://timezone-slot-proof.sociobot.in /tmp/timezone-slot-proof-review4/verify-live
-```
+- Local mobile: `evidence-polish-4/demo-mobile.png`, `privacy-mobile.png`, `not-found-mobile.png`, `review-link.png`.
+- Live mobile: `evidence-polish-4/live/live-demo-mobile.png`, `live-review-link.png`, `live-privacy-mobile.png`, `live-not-found-mobile.png`.
+- Full finding map: `.factory/polish-4.md`.
 
-No deployment was performed.
+## Known gaps
+
+None.
