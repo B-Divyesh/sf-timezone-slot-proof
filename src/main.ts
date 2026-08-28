@@ -461,7 +461,8 @@ function initializeRoute(): void {
 }
 
 function updateConnection(): void {
-  $<HTMLElement>('#connection-status').hidden = navigator.onLine;
+  const status = document.querySelector<HTMLElement>('#connection-status');
+  if (status) status.hidden = navigator.onLine;
 }
 
 demoMode = routeName() === 'demo';
@@ -482,8 +483,8 @@ if ('serviceWorker' in navigator && import.meta.env.PROD) {
   });
 }
 
-$('#reset-demo').addEventListener('click', () => { setupDemo(true); showToast('Sample check reset.'); });
-$('#start-real').addEventListener('click', () => { location.assign('/'); });
+document.querySelector<HTMLButtonElement>('#reset-demo')?.addEventListener('click', () => { setupDemo(true); showToast('Sample check reset.'); });
+document.querySelector<HTMLButtonElement>('#start-real')?.addEventListener('click', () => { location.assign('/'); });
 
 window.addEventListener('popstate', () => {
   const route = routeName();

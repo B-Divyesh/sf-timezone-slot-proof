@@ -61,6 +61,9 @@ test('@claim:no-login demo has no account or calendar-login flow', async ({ page
 });
 
 test('routes, titles, focus, mobile layout, metadata, and accessibility work', async ({ page }) => {
+  const errors: string[] = [];
+  page.on('console', (message) => { if (message.type() === 'error') errors.push(message.text()); });
+  page.on('pageerror', (error) => errors.push(error.message));
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/');
   await expect(page).toHaveTitle('Timezone Slot Proof — Check booking hours');
@@ -76,4 +79,5 @@ test('routes, titles, focus, mobile layout, metadata, and accessibility work', a
   await expect(page).toHaveTitle('Page not found — Timezone Slot Proof');
   await expect(page.getByRole('heading', { name: 'Page not found' })).toBeVisible();
   expect(await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa']).analyze()).toEqual(expect.objectContaining({ violations: [] }));
+  expect(errors).toEqual([]);
 });
